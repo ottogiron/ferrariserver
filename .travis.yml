@@ -13,4 +13,4 @@ deploy:
     - build/dist/ferrariserver.darwin-amd64.tar.gz
   on:
     go: 1.7
-    tags: tru
+    tags: true
