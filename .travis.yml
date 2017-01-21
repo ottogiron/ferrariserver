@@ -1,0 +1,16 @@
+language: go
+go:
+- 1.7
+install:
+- mkdir -p $GOPATH/bin
+- curl https://glide.sh/get | sh
+deploy:
+  provider: releases
+  api_key:
+    secure: FWq4y384ji7WZ/tYlipI1JpVxmnplvGv47dKAh+BUdL4JRgaYNveW+oNDwVkZLiK9rqZ4+TmHK9a+DltVQEzw189jHuyaOR/5UH/GxEnqO/38aMvIlZMfsYE0xeWxVE/UsVD0OBrgRZGG8lu5mm50ICsOVlzedzfWbShlUs+T6frj8h/sGduDKVj1ia07xdqc0+M5b/9CNKcKOzjG98tnhr8LsUFb9jo6KtZ++AC1hZdpIOWC8Mvc5jes2NIBs3NaDfgpx+ICYCpsY1DlcYtUiQ5GmJ8rtT5FNE4iA1fgPchE/SeP/IGnq+bbI8a3kcSjJBH4YLsS9ZAIlDtuSjqbXFBDrsaH7xXuG764YBMjAv8zzestRH4SpqJM1iZMkzJzzdnXP3bePHym6ivPW2L+BJmSI1epyYPnWcv9DP0ZKHFjsjxQVAqyIFnFZwIQ6nB0EfxB+74ypX0Qp6YtB9Blzd+3fTGcHoKqWYFepC9manUKuda6YdNFG9U3ZwkUFw6uMo3lqvBp39+kmnI/rAv67Imn5gJ4O9kigMRlIj2SnTSeb5pk5LAW9HfcDjREDiVIHHLQCcauGa0cP9a61o4/jwO2bSKlEr2I2kT92B4yLpWCZlFl0b7aPC63TIzF0JlUx0fUEU5ro/Lce8ImrF44uWsFZKIf9SbOMB6X98xgS8=
+  file:  
+    - build/dist/ferrariserver.linux-amd64.tar.gz
+    - build/dist/ferrariserver.darwin-amd64.tar.gz
+  on:
+    go: 1.7
+    tags: tru
