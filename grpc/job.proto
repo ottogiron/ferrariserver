@@ -1,0 +1,45 @@
+syntax = "proto3";
+
+service JobService { 
+    
+    //RegisterJob registers a job given a Worker.ID message
+    rpc RegisterJob(Worker) returns (Job) {}
+
+    //RecordLog records
+    rpc RecordLog(stream Log) returns (Empty) {}
+
+    rpc RegisterJobResult(JobResult) returns (Job) {}
+
+}
+
+message Job {
+    string id = 1;
+    string worker_id = 2;
+    int64 start_time = 3;
+    int64 end_time = 4;
+    
+}
+
+message JobResult {
+    string worker_id = 1;
+    string job_id    = 2;
+    int64 startTime = 3;
+
+    enum Status {
+        Sucess = 0;
+        Failed = 1;
+    }
+}
+
+message Worker {
+    string id = 1;
+}
+
+message Log {
+    string worker_id = 1; 
+    string job_id    = 2;
+    bytes message   = 3;
+}
+
+message Empty {
+}

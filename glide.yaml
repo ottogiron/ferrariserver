@@ -2,3 +2,5 @@ package: github.com/ferrariframework/ferrariserver
 import:
 - package: github.com/goadesign/goa
   version: v1
+- package: google.golang.org/grpc
+  version: ^1.0.5
