@@ -1,5 +1,5 @@
 hash: 30a2358297f60cf417fd1a38d1d835152739260933b5c6e6e1dafe533412f0d6
-updated: 2017-01-21T19:07:09.880120506-06:00
+updated: 2017-01-21T21:22:51.714315159-06:00
 imports:
 - name: github.com/armon/go-metrics
   version: 93f237eba9b0602f3e73710416558854a81d9337
@@ -24,6 +24,10 @@ imports:
   - goagen/utils
   - uuid
   - version
+- name: github.com/golang/protobuf
+  version: 8ee79997227bf9b34611aee7946ae64735e6fd93
+  subpackages:
+  - proto
 - name: github.com/inconshreveable/mousetrap
   version: 76626ae9c91c4f2a10f34cad8ce83ea42c93bb75
 - name: github.com/manveru/faker
@@ -40,6 +44,12 @@ imports:
   version: 4be9b97e3a30d0b6554b360a8e10c88c059bba23
   subpackages:
   - context
+  - http2
+  - http2/hpack
+  - idna
+  - internal/timeseries
+  - lex/httplex
+  - trace
   - websocket
 - name: golang.org/x/tools
   version: 608c3b098abba448c9e25b436e2c0e0c937311d6
@@ -47,6 +57,17 @@ imports:
   - go/ast/astutil
 - name: google.golang.org/grpc
   version: 708a7f9f3283aa2d4f6132d287d78683babe55c8
+  subpackages:
+  - codes
+  - credentials
+  - grpclog
+  - internal
+  - metadata
+  - naming
+  - peer
+  - stats
+  - tap
+  - transport
 - name: gopkg.in/yaml.v2
   version: a5b47d31c556af34a302ce5d659e6fea44d90de0
 testImports: []
