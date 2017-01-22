@@ -1,9 +1,7 @@
 .glide
 vendor
-app
-client
+app 
 js
 schema
 swagger
 tool
-grpc/gen

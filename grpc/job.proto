@@ -1,5 +1,7 @@
 syntax = "proto3";
 
+package gen;
+
 service JobService { 
     
     //RegisterJob registers a job given a Worker.ID message
