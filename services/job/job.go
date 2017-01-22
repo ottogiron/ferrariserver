@@ -27,6 +27,7 @@ func (j *Job) Save(job models.Job) (string, error) {
 
 //RecordLog records a job log
 func (j *Job) RecordLog(log models.Log) error {
+	fmt.Println("workerID", log.WorkerID, "jobID", log.JobID)
 	fmt.Println(log.Message)
 	return nil
 }
