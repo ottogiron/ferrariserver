@@ -1,5 +1,5 @@
 hash: 30a2358297f60cf417fd1a38d1d835152739260933b5c6e6e1dafe533412f0d6
-updated: 2017-01-21T21:40:49.401247032-06:00
+updated: 2017-01-22T00:10:20.754684678-06:00
 imports:
 - name: github.com/armon/go-metrics
   version: 93f237eba9b0602f3e73710416558854a81d9337
@@ -53,6 +53,8 @@ imports:
   version: df1e16fde7fc330a0ca68167c23bf7ed6ac31d6d
 - name: github.com/pelletier/go-toml
   version: 7cb988051d5045890cb91402a0b5fddc76c627bc
+- name: github.com/pkg/errors
+  version: 645ef00459ed84a119197bfb8d8205042c6df63d
 - name: github.com/satori/go.uuid
   version: b061729afc07e77a8aa4fad0a2fd840958f1942a
 - name: github.com/spf13/afero
