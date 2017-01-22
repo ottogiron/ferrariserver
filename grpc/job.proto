@@ -5,7 +5,7 @@ package gen;
 service JobService { 
     
     //RegisterJob registers a job given a Worker.ID message
-    rpc RegisterJob(Worker) returns (Job) {}
+    rpc RegisterJob(Job) returns (Job) {}
 
     //RecordLog records
     rpc RecordLog(stream Log) returns (Empty) {}

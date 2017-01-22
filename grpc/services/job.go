@@ -18,7 +18,7 @@ func NewJobService() *JobService {
 }
 
 //RegisterJob registers a job
-func (j *JobService) RegisterJob(context.Context, *gen.Worker) (*gen.Job, error) {
+func (j *JobService) RegisterJob(context.Context, *gen.Job) (*gen.Job, error) {
 	return nil, nil
 }
 

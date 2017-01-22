@@ -22,8 +22,10 @@ test: lint generate
 generate: install_dependencies 
 	go generate
 
-grpc_generate: 
-	protoc -I grpc/ grpc/job.proto --go_out=plugins=grpc:grpc/gen
+generate_grpc:
+	@echo Generating grpc assets...
+	@protoc -I grpc/ grpc/job.proto --go_out=plugins=grpc:grpc/gen
+	@echo Done
 
 lint:
 	@go fmt $(SOURCE_DIRS)
