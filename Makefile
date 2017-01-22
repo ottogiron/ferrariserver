@@ -20,7 +20,7 @@ test: lint generate
 	 @go test -v $(SOURCE_DIRS) -cover -bench . -race 
 
 generate: install_dependencies 
-	go generategi
+	go generate
 
 grpc_generate: 
 	protoc -I grpc/ grpc/job.proto --go_out=plugins=grpc:grpc/gen
