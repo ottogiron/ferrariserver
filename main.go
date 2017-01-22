@@ -1,7 +1,8 @@
+
 package main
 
-import "fmt"
+import "github.com/ferrariframework/ferrariserver/cmd"
 
 func main() {
-	fmt.Print("hello server")
+	cmd.Execute()
 }
