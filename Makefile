@@ -16,9 +16,11 @@ SOURCE_DIRS := $(shell go list ./... | grep -v /vendor/)
 all: test package-linux package-darwin
 
 
-test: install_dependencies lint
+test: lint generate
 	 @go test -v $(SOURCE_DIRS) -cover -bench . -race 
 
+generate: install_dependencies 
+	go generate
 
 lint:
 	@go fmt $(SOURCE_DIRS)

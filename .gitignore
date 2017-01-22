@@ -1,2 +1,8 @@
 .glide
 vendor
+app
+client
+js
+schema
+swagger
+tool
