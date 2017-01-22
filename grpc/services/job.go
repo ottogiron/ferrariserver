@@ -4,17 +4,19 @@ import (
 	"golang.org/x/net/context"
 
 	"github.com/ferrariframework/ferrariserver/grpc/gen"
+	"github.com/ferrariframework/ferrariserver/services/job"
 )
 
 var _ gen.JobServiceServer = (*JobService)(nil)
 
 //JobService implements a grpc JobService
 type JobService struct {
+	jobService job.Service
 }
 
 //NewJobService returns a new jobService
-func NewJobService() *JobService {
-	return &JobService{}
+func NewJobService(jobService job.Service) *JobService {
+	return &JobService{jobService: jobService}
 }
 
 //RegisterJob registers a job

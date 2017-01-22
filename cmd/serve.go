@@ -8,6 +8,7 @@ import (
 	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/grpclog"
 
+	"github.com/ferrariframework/ferrariserver/config"
 	"github.com/ferrariframework/ferrariserver/grpc/gen"
 	rpcservices "github.com/ferrariframework/ferrariserver/grpc/services"
 	"github.com/spf13/cobra"
@@ -46,7 +47,7 @@ var serveCmd = &cobra.Command{
 			opts = []grpc.ServerOption{grpc.Creds(creds)}
 		}
 		grpcServer := grpc.NewServer(opts...)
-		gen.RegisterJobServiceServer(grpcServer, rpcservices.NewJobService())
+		gen.RegisterJobServiceServer(grpcServer, rpcservices.NewJobService(config.JobService()))
 		grpcServer.Serve(lis)
 
 	},

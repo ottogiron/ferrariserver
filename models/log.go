@@ -4,5 +4,5 @@ package models
 type Log struct {
 	WorkerID string
 	JobID    string
-	message  []byte
+	Message  []byte
 }

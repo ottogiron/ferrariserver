@@ -1,6 +1,7 @@
 package job
 
 import "github.com/ferrariframework/ferrariserver/models"
+import "fmt"
 
 var _ Service = (*Job)(nil)
 
@@ -20,11 +21,12 @@ type Job struct {
 }
 
 //Save saves a new job
-func (j *Job) Save(models.Job) (string, error) {
+func (j *Job) Save(job models.Job) (string, error) {
 	return "", nil
 }
 
 //RecordLog records a job log
-func (j *Job) RecordLog(models.Log) error {
+func (j *Job) RecordLog(log models.Log) error {
+	fmt.Println(log.Message)
 	return nil
 }
