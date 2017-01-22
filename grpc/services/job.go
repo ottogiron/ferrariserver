@@ -5,10 +5,13 @@ import (
 
 	"io"
 
+	"time"
+
 	"github.com/ferrariframework/ferrariserver/grpc/gen"
 	"github.com/ferrariframework/ferrariserver/models"
 	"github.com/ferrariframework/ferrariserver/services/job"
 	"github.com/pkg/errors"
+	uuid "github.com/satori/go.uuid"
 )
 
 var _ gen.JobServiceServer = (*JobService)(nil)
@@ -24,8 +27,12 @@ func NewJobService(jobService job.Service) *JobService {
 }
 
 //RegisterJob registers a job
-func (j *JobService) RegisterJob(context.Context, *gen.Job) (*gen.Job, error) {
-	return nil, nil
+func (j *JobService) RegisterJob(ctx context.Context, job *gen.Job) (*gen.Job, error) {
+	return &gen.Job{
+		WorkerId:  job.WorkerId,
+		Id:        uuid.NewV4().String(),
+		StartTime: time.Now().Unix(),
+	}, nil
 }
 
 //RecordLog records a job log sent from a worker
@@ -51,6 +58,9 @@ func (j *JobService) RecordLog(stream gen.JobService_RecordLogServer) error {
 }
 
 //RegisterJobResult registers the result of a Job
-func (j *JobService) RegisterJobResult(context.Context, *gen.JobResult) (*gen.Job, error) {
-	return nil, nil
+func (j *JobService) RegisterJobResult(ctx context.Context, result *gen.JobResult) (*gen.Job, error) {
+	return &gen.Job{
+		WorkerId: result.WorkerId,
+		Id:       result.JobId,
+	}, nil
 }
