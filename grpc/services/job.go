@@ -34,13 +34,14 @@ func (j *JobService) RecordLog(stream gen.JobService_RecordLogServer) error {
 		jobLog, err := stream.Recv()
 
 		if err == io.EOF {
-			return stream.SendAndClose(nil)
+			return stream.SendAndClose(&gen.Empty{})
 		}
 
 		if err != nil {
 			return errors.Wrap(err, "grpc.JobService Failed to record log")
 		}
-		return j.jobService.RecordLog(models.Log{
+
+		j.jobService.RecordLog(models.Log{
 			WorkerID: jobLog.WorkerId,
 			JobID:    jobLog.JobId,
 			Message:  jobLog.Message,
