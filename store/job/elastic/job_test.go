@@ -2,8 +2,13 @@ package elastic
 
 import (
 	"context"
+	"fmt"
+	"math/rand"
 	"reflect"
+	"strconv"
 	"testing"
+
+	"time"
 
 	"github.com/ferrariframework/ferrariserver/models"
 	"github.com/ferrariframework/ferrariserver/store"
@@ -19,8 +24,9 @@ func newTestStore(t *testing.T) (store.Job, func()) {
 	if err != nil {
 		t.Fatal("Failed to create new store elastic client ", err)
 	}
-
-	index := "test_index"
+	r := rand.New(rand.NewSource(time.Now().UnixNano()))
+	index := "test_index" + strconv.Itoa(r.Int())
+	fmt.Println("Test index name:", index)
 	docType := "test_doc_type"
 
 	idGenerator, err := snowflake.New(100)
@@ -86,34 +92,39 @@ func Test_jobStore_Save(t *testing.T) {
 }
 
 func Test_jobStore_Get(t *testing.T) {
-	type fields struct {
-		client       *oelastic.Client
-		index        string
-		docType      string
-		idGenerator  *snowflake.Snowflake
-		refreshIndex string
+
+	j, clean := newTestStore(t)
+	defer clean()
+
+	testSaveJob := &models.Job{
+		WorkerID:  "worker123",
+		StartTime: time.Now(),
+		EndTime:   time.Now(),
+		Output:    []byte("Some happy output"),
 	}
+
+	savedJob, err := j.Save(testSaveJob)
+
+	if err != nil {
+		t.Fatal("Failed to save test job for Get test", err)
+	}
+
 	type args struct {
 		id string
 	}
 	tests := []struct {
 		name    string
-		fields  fields
 		args    args
 		want    *models.Job
 		wantErr bool
 	}{
-	// TODO: Add test cases.
+		{"Get", args{savedJob.ID}, savedJob, false},
+		{"Get Not Found", args{"1234564788478478744"}, nil, true},
 	}
+
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			j := &jobStore{
-				client:       tt.fields.client,
-				index:        tt.fields.index,
-				docType:      tt.fields.docType,
-				idGenerator:  tt.fields.idGenerator,
-				refreshIndex: tt.fields.refreshIndex,
-			}
+
 			got, err := j.Get(tt.args.id)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("jobStore.Get() error = %v, wantErr %v", err, tt.wantErr)

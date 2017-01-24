@@ -68,19 +68,20 @@ func (j *jobStore) Get(id string) (*models.Job, error) {
 		Do(context.Background())
 
 	if err != nil {
+		if oelastic.IsNotFound(err) {
+			return nil, errors.Wrapf(errortypes.NewNotFound(), "elastic.Store.Get(%id)", id)
+		}
 		return nil, errors.Wrapf(err, "elastic.Store Failed to get jobID=%s", id)
 	}
 
-	if !res.Found {
-		return nil, errors.Wrapf(errortypes.NewNotFound(), "elastic.Store.Get(%id)", id)
-	}
-
 	var job models.Job
+
 	err = json.Unmarshal(*res.Source, &job)
 
 	if err != nil {
 		return nil, errors.Wrapf(err, "elastic.Store.Get(%id)", id)
 	}
+	job.ID = res.Id
 	return &job, nil
 }
 
