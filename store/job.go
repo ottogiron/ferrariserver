@@ -6,4 +6,5 @@ import "github.com/ferrariframework/ferrariserver/models"
 type Job interface {
 	Save(*models.Job) (*models.Job, error)
 	Get(id string) (*models.Job, error)
+	Update(id string, model *models.Job) (*models.Job, error)
 }

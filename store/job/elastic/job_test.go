@@ -100,7 +100,7 @@ func Test_jobStore_Get(t *testing.T) {
 		WorkerID:  "worker123",
 		StartTime: time.Now(),
 		EndTime:   time.Now(),
-		Output:    []byte("Some happy output"),
+		Output:    "Some happy output",
 	}
 
 	savedJob, err := j.Save(testSaveJob)
@@ -138,35 +138,37 @@ func Test_jobStore_Get(t *testing.T) {
 }
 
 func Test_jobStore_Update(t *testing.T) {
-	type fields struct {
-		client       *oelastic.Client
-		index        string
-		docType      string
-		idGenerator  *snowflake.Snowflake
-		refreshIndex string
+	j, clean := newTestStore(t)
+	defer clean()
+
+	testSaveJob := &models.Job{
+		WorkerID:  "worker123",
+		StartTime: time.Now(),
+		EndTime:   time.Now(),
+		Output:    "Some happy output",
 	}
+
+	_, err := j.Save(testSaveJob)
+
+	if err != nil {
+		t.Fatal("Failed to save test job for Get test", err)
+	}
+
 	type args struct {
 		id  string
 		job *models.Job
 	}
 	tests := []struct {
 		name    string
-		fields  fields
 		args    args
 		want    *models.Job
 		wantErr bool
 	}{
-	// TODO: Add test cases.
+	//{"Update", args{}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			j := &jobStore{
-				client:       tt.fields.client,
-				index:        tt.fields.index,
-				docType:      tt.fields.docType,
-				idGenerator:  tt.fields.idGenerator,
-				refreshIndex: tt.fields.refreshIndex,
-			}
+
 			got, err := j.Update(tt.args.id, tt.args.job)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("jobStore.Update() error = %v, wantErr %v", err, tt.wantErr)
