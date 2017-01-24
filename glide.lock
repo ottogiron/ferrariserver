@@ -1,5 +1,5 @@
-hash: a525e615e2b5010937a6880c25362fb114071e88b82082c87af693a61958f36b
-updated: 2017-01-22T15:37:13.87910574-06:00
+hash: 59e83661caf808ddfc9667deb28836d3baed04b473a9c2ee69d6b4a031d10b0f
+updated: 2017-01-23T17:49:51.332712028-06:00
 imports:
 - name: github.com/armon/go-metrics
   version: 93f237eba9b0602f3e73710416558854a81d9337
@@ -47,6 +47,8 @@ imports:
   version: 9c47895dc1ce54302908ab8a43385d1f5df2c11c
 - name: github.com/manveru/faker
   version: 717f7cf83fb78669bfab612749c2e8ff63d5be11
+- name: github.com/mattheath/kala
+  version: 70c7568dcd62c5c0d7c0c592222c5d080449fd79
 - name: github.com/mitchellh/mapstructure
   version: f3009df150dadf309fdee4a54ed65c124afad715
 - name: github.com/pelletier/go-buffruneio
@@ -77,6 +79,7 @@ imports:
   version: 4be9b97e3a30d0b6554b360a8e10c88c059bba23
   subpackages:
   - context
+  - context/ctxhttp
   - http2
   - http2/hpack
   - idna
@@ -110,6 +113,13 @@ imports:
   - stats
   - tap
   - transport
+- name: gopkg.in/olivere/elastic.v3
+  version: f27a28dd68c359eb20ce5918a7d976f34c18cf03
+- name: gopkg.in/olivere/elastic.v5
+  version: b272fab42387a42585235d56f8c6b53b13ddfb7d
+  subpackages:
+  - backoff
+  - uritemplates
 - name: gopkg.in/yaml.v2
   version: a5b47d31c556af34a302ce5d659e6fea44d90de0
 testImports: []
