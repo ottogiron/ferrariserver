@@ -148,35 +148,40 @@ func Test_jobStore_Update(t *testing.T) {
 		Output:    "Some happy output",
 	}
 
-	_, err := j.Save(testSaveJob)
+	savedJob, err := j.Save(testSaveJob)
 
 	if err != nil {
 		t.Fatal("Failed to save test job for Get test", err)
 	}
 
+	savedJob.WorkerID = "worker321"
 	type args struct {
 		id  string
 		job *models.Job
 	}
 	tests := []struct {
-		name    string
-		args    args
-		want    *models.Job
-		wantErr bool
+		name      string
+		args      args
+		wantSaved *models.Job
+		wantErr   bool
 	}{
-	//{"Update", args{}},
+		{"Update", args{savedJob.ID, savedJob}, savedJob, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 
-			got, err := j.Update(tt.args.id, tt.args.job)
+			err := j.Update(tt.args.id, tt.args.job)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("jobStore.Update() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("jobStore.Update() = %v, want %v", got, tt.want)
+
+			got, err := j.Get(savedJob.ID)
+
+			if !reflect.DeepEqual(got, savedJob) {
+				t.Errorf("jobStore.Get() = %v want %v", got, tt.wantSaved)
 			}
+
 		})
 	}
 }

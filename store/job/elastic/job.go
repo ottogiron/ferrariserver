@@ -85,9 +85,9 @@ func (j *jobStore) Get(id string) (*models.Job, error) {
 	return &job, nil
 }
 
-func (j *jobStore) Update(id string, job *models.Job) (*models.Job, error) {
+func (j *jobStore) Update(id string, job *models.Job) error {
 
-	res, err := j.client.Update().
+	_, err := j.client.Update().
 		Index(j.index).
 		Type(j.docType).
 		Refresh(j.refreshIndex).
@@ -96,17 +96,11 @@ func (j *jobStore) Update(id string, job *models.Job) (*models.Job, error) {
 		Do(context.Background())
 
 	if err != nil {
-		return nil, errors.Wrapf(err, "elastic.Store.Update(%id, %v) ", id, job)
+		if oelastic.IsNotFound(err) {
+			return errors.Wrapf(errortypes.NewNotFound(), "elastic.Store.Update(%id, %v)", job)
+		}
+		return errors.Wrapf(err, "elastic.Store.Update(%id, %v) ", id, job)
 	}
 
-	if !res.GetResult.Found {
-		return nil, errors.Wrapf(errortypes.NewNotFound(), "elastic.Store.Update(%id, %v)", job)
-	}
-
-	err = json.Unmarshal(*res.GetResult.Source, job)
-
-	if err != nil {
-		return nil, errors.Wrapf(err, "elastic.Store.Update(%id, %v)", job)
-	}
-	return job, nil
+	return nil
 }
