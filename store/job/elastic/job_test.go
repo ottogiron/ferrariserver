@@ -130,7 +130,7 @@ func Test_jobStore_Get(t *testing.T) {
 				t.Errorf("jobStore.Get() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
-			if !reflect.DeepEqual(got, tt.want) {
+			if tt.want != nil && got.ID != tt.want.ID {
 				t.Errorf("jobStore.Get() = %v, want %v", got, tt.want)
 			}
 		})
