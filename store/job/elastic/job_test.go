@@ -178,7 +178,12 @@ func Test_jobStore_Update(t *testing.T) {
 
 			got, err := j.Get(savedJob.ID)
 
-			if !reflect.DeepEqual(got, savedJob) {
+			if err != nil {
+				t.Errorf("jobStore.Update() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+
+			if got.WorkerID != savedJob.WorkerID {
 				t.Errorf("jobStore.Get() = %v want %v", got, tt.wantSaved)
 			}
 
