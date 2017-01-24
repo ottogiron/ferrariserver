@@ -19,5 +19,6 @@ type Job struct {
 	ID        string
 	WorkerID  string
 	StartTime time.Time
+	EndTime   time.Time
 	Output    []byte
 }

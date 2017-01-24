@@ -24,8 +24,11 @@ type jobStore struct {
 
 //New returns a new instance of a job store
 func New(options ...Option) store.Job {
-	j := &jobStore{}
-	j.refreshIndex = "true"
+
+	j := &jobStore{
+		refreshIndex: "true",
+	}
+
 	for _, option := range options {
 		option(j)
 	}
