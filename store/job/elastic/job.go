@@ -3,8 +3,11 @@ package elastic
 import (
 	"context"
 
+	"encoding/json"
+
 	"github.com/ferrariframework/ferrariserver/models"
 	"github.com/ferrariframework/ferrariserver/store"
+	"github.com/ferrariframework/ferrariserver/store/errortypes"
 	"github.com/mattheath/kala/snowflake"
 	"github.com/pkg/errors"
 	oelastic "gopkg.in/olivere/elastic.v3"
@@ -40,9 +43,9 @@ func (j *jobStore) Save(job *models.Job) (*models.Job, error) {
 	_, err = j.client.Index().
 		Index(j.index).
 		Type(j.docType).
+		Refresh(j.refreshIndex).
 		Id(id).
 		BodyJson(job).
-		Refresh(j.refreshIndex).
 		Do(context.Background())
 
 	if err != nil {
@@ -50,5 +53,56 @@ func (j *jobStore) Save(job *models.Job) (*models.Job, error) {
 	}
 
 	job.ID = id
+	return job, nil
+}
+
+func (j *jobStore) Get(id string) (*models.Job, error) {
+	res, err := j.client.Get().
+		Index(j.index).
+		Type(j.docType).
+		Refresh(j.refreshIndex).
+		Id(id).
+		Do(context.Background())
+
+	if err != nil {
+		return nil, errors.Wrapf(err, "elastic.Store Failed to get jobID=%s", id)
+	}
+
+	if !res.Found {
+		return nil, errors.Wrapf(errortypes.NewNotFound(), "elastic.Store.Get(%id)", id)
+	}
+
+	var job models.Job
+	err = json.Unmarshal(*res.Source, &job)
+
+	if err != nil {
+		return nil, errors.Wrapf(err, "elastic.Store.Get(%id)", id)
+	}
+	return &job, nil
+}
+
+func (j *jobStore) Update(id string, job *models.Job) (*models.Job, error) {
+
+	res, err := j.client.Update().
+		Index(j.index).
+		Type(j.docType).
+		Refresh(j.refreshIndex).
+		Id(id).
+		Doc(job).
+		Do(context.Background())
+
+	if err != nil {
+		return nil, errors.Wrapf(err, "elastic.Store.Update(%id, %v) ", id, job)
+	}
+
+	if !res.GetResult.Found {
+		return nil, errors.Wrapf(errortypes.NewNotFound(), "elastic.Store.Update(%id, %v)", job)
+	}
+
+	err = json.Unmarshal(*res.GetResult.Source, job)
+
+	if err != nil {
+		return nil, errors.Wrapf(err, "elastic.Store.Update(%id, %v)", job)
+	}
 	return job, nil
 }
