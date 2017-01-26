@@ -9,3 +9,5 @@ import:
 - package: gopkg.in/olivere/elastic.v3
   version: ^5.0.18
 - package: github.com/mattheath/kala
+- package: github.com/inconshreveable/log15
+  version: ^2.11.0

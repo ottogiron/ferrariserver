@@ -11,7 +11,6 @@ import (
 	"github.com/ferrariframework/ferrariserver/models"
 	"github.com/ferrariframework/ferrariserver/services/job"
 	"github.com/pkg/errors"
-	uuid "github.com/satori/go.uuid"
 )
 
 var _ gen.JobServiceServer = (*JobService)(nil)
@@ -28,10 +27,23 @@ func NewJobService(jobService job.Service) *JobService {
 
 //RegisterJob registers a job
 func (j *JobService) RegisterJob(ctx context.Context, job *gen.Job) (*gen.Job, error) {
+	now := time.Now()
+	newJob := &models.Job{
+		WorkerID:  job.WorkerId,
+		RunID:     job.RunId,
+		StartTime: now,
+	}
+
+	id, err := j.jobService.Save(newJob)
+
+	if err != nil {
+		return nil, errors.Wrapf(err, "Failed to save new job workerID=%s runID=%s", job.WorkerId, job.RunId)
+	}
+
 	return &gen.Job{
 		WorkerId:  job.WorkerId,
-		Id:        uuid.NewV4().String(),
-		StartTime: time.Now().Unix(),
+		Id:        id,
+		StartTime: now.Unix(),
 	}, nil
 }
 
@@ -48,10 +60,11 @@ func (j *JobService) RecordLog(stream gen.JobService_RecordLogServer) error {
 			return errors.Wrap(err, "grpc.JobService Failed to record log")
 		}
 
-		j.jobService.RecordLog(models.Log{
-			WorkerID: jobLog.WorkerId,
-			JobID:    jobLog.JobId,
-			Message:  jobLog.Message,
+		j.jobService.RecordLog(&models.JobLog{
+			WorkerID:    jobLog.WorkerId,
+			JobID:       jobLog.JobId,
+			Message:     jobLog.Message,
+			CreatedTime: time.Now(),
 		})
 	}
 

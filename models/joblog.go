@@ -4,8 +4,8 @@ import (
 	"time"
 )
 
-//Log represents a worker log
-type Log struct {
+//JobLog represents a worker log
+type JobLog struct {
 	WorkerID    string
 	JobID       string
 	Message     []byte

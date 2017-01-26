@@ -1,5 +1,5 @@
-hash: 59e83661caf808ddfc9667deb28836d3baed04b473a9c2ee69d6b4a031d10b0f
-updated: 2017-01-23T17:49:51.332712028-06:00
+hash: 305d1bfec687701c485345c47c7b30cc1e7e645f2dd68156dbd63571324b3b6e
+updated: 2017-01-25T23:54:00.173728578-06:00
 imports:
 - name: github.com/armon/go-metrics
   version: 93f237eba9b0602f3e73710416558854a81d9337
@@ -41,6 +41,8 @@ imports:
   - json/parser
   - json/scanner
   - json/token
+- name: github.com/inconshreveable/log15
+  version: b105bd37f74e5d9dc7b6ad7806715c7a2b83fd3f
 - name: github.com/inconshreveable/mousetrap
   version: 76626ae9c91c4f2a10f34cad8ce83ea42c93bb75
 - name: github.com/magiconair/properties
@@ -49,6 +51,13 @@ imports:
   version: 717f7cf83fb78669bfab612749c2e8ff63d5be11
 - name: github.com/mattheath/kala
   version: 70c7568dcd62c5c0d7c0c592222c5d080449fd79
+  subpackages:
+  - snowflake
+  - util
+- name: github.com/mattn/go-colorable
+  version: d228849504861217f796da67fae4f6e347643f15
+- name: github.com/mattn/go-isatty
+  version: 30a891c33c7cde7b02a981314b4228ec99380cca
 - name: github.com/mitchellh/mapstructure
   version: f3009df150dadf309fdee4a54ed65c124afad715
 - name: github.com/pelletier/go-buffruneio
@@ -113,6 +122,11 @@ imports:
   - stats
   - tap
   - transport
+- name: gopkg.in/inconshreveable/log15.v2
+  version: b105bd37f74e5d9dc7b6ad7806715c7a2b83fd3f
+  subpackages:
+  - stack
+  - term
 - name: gopkg.in/olivere/elastic.v3
   version: f27a28dd68c359eb20ce5918a7d976f34c18cf03
 - name: gopkg.in/olivere/elastic.v5
