@@ -8,7 +8,7 @@ service JobService {
     rpc RegisterJob(Job) returns (Job) {}
 
     //RecordLog records
-    rpc RecordLog(stream Log) returns (Empty) {}
+    rpc RecordLog(stream JobLog) returns (Empty) {}
 
     rpc RegisterJobResult(JobResult) returns (Job) {}
 
@@ -17,15 +17,17 @@ service JobService {
 message Job {
     string id = 1;
     string worker_id = 2;
-    int64 start_time = 3;
-    int64 end_time = 4;
+    string run_id = 3;
+    int64 start_time = 4;
+    int64 end_time = 5;
     
 }
 
 message JobResult {
     string worker_id = 1;
     string job_id    = 2;
-    int64 startTime = 3;
+    string rung_id = 3;
+    int64 startTime = 4;
 
     enum Status {
         Sucess = 0;
@@ -37,10 +39,11 @@ message Worker {
     string id = 1;
 }
 
-message Log {
+message JobLog {
     string worker_id = 1; 
-    string job_id    = 2;
-    bytes message   = 3;
+    string run_id = 2;
+    string job_id    = 3;
+    bytes message   = 4;
 }
 
 message Empty {
