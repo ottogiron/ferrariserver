@@ -1,4 +1,4 @@
-package elastic
+package worker
 
 import (
 	"context"
@@ -13,8 +13,8 @@ import (
 	oelastic "gopkg.in/olivere/elastic.v3"
 )
 
-//JobStore implementation of a job store
-type jobStore struct {
+//WorkerStore implementation of a job store
+type workerStore struct {
 	client       *oelastic.Client
 	index        string
 	docType      string
@@ -22,10 +22,10 @@ type jobStore struct {
 	refreshIndex string
 }
 
-//New returns a new instance of a job store
-func New(options ...Option) store.Job {
+//New returns a new instance of a worker store
+func New(options ...Option) store.Worker {
 
-	j := &jobStore{
+	j := &workerStore{
 		refreshIndex: "true",
 	}
 
@@ -36,34 +36,34 @@ func New(options ...Option) store.Job {
 	return j
 }
 
-func (j *jobStore) Save(job *models.Job) (*models.Job, error) {
-	id, err := j.idGenerator.Mint()
+func (w *workerStore) Save(worker *models.Worker) (*models.Worker, error) {
+	id, err := w.idGenerator.Mint()
 
 	if err != nil {
 		return nil, errors.Wrap(err, "elastic.Store Failed to generate id for job ")
 	}
 
-	_, err = j.client.Index().
-		Index(j.index).
-		Type(j.docType).
-		Refresh(j.refreshIndex).
+	_, err = w.client.Index().
+		Index(w.index).
+		Type(w.docType).
+		Refresh(w.refreshIndex).
 		Id(id).
-		BodyJson(job).
+		BodyJson(worker).
 		Do(context.Background())
 
 	if err != nil {
-		return nil, errors.Wrapf(err, "elastic.Store Failed to index job %v", job)
+		return nil, errors.Wrapf(err, "elastic.Store Failed to index job %v", worker)
 	}
 
-	job.ID = id
-	return job, nil
+	worker.ID = id
+	return worker, nil
 }
 
-func (j *jobStore) Get(id string) (*models.Job, error) {
-	res, err := j.client.Get().
-		Index(j.index).
-		Type(j.docType).
-		Refresh(j.refreshIndex).
+func (w *workerStore) Get(id string) (*models.Worker, error) {
+	res, err := w.client.Get().
+		Index(w.index).
+		Type(w.docType).
+		Refresh(w.refreshIndex).
 		Id(id).
 		Do(context.Background())
 
@@ -74,7 +74,7 @@ func (j *jobStore) Get(id string) (*models.Job, error) {
 		return nil, errors.Wrapf(err, "elastic.Store Failed to get jobID=%s", id)
 	}
 
-	var job models.Job
+	var job models.Worker
 
 	err = json.Unmarshal(*res.Source, &job)
 
@@ -85,21 +85,21 @@ func (j *jobStore) Get(id string) (*models.Job, error) {
 	return &job, nil
 }
 
-func (j *jobStore) Update(id string, job *models.Job) error {
+func (w *workerStore) Update(id string, worker *models.Worker) error {
 
-	_, err := j.client.Update().
-		Index(j.index).
-		Type(j.docType).
-		Refresh(j.refreshIndex).
+	_, err := w.client.Update().
+		Index(w.index).
+		Type(w.docType).
+		Refresh(w.refreshIndex).
 		Id(id).
-		Doc(job).
+		Doc(worker).
 		Do(context.Background())
 
 	if err != nil {
 		if oelastic.IsNotFound(err) {
-			return errors.Wrapf(errortypes.NewNotFound(), "elastic.Store.Update(%id, %v)", job)
+			return errors.Wrapf(errortypes.NewNotFound(), "elastic.Store.Update(%id, %v)", worker)
 		}
-		return errors.Wrapf(err, "elastic.Store.Update(%id, %v) ", id, job)
+		return errors.Wrapf(err, "elastic.Store.Update(%id, %v) ", id, worker)
 	}
 
 	return nil

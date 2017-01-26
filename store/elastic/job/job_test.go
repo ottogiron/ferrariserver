@@ -1,4 +1,4 @@
-package elastic
+package job
 
 import (
 	"context"
@@ -28,6 +28,10 @@ func newTestStore(t *testing.T) (store.Job, func()) {
 	index := "test_index" + strconv.Itoa(r.Int())
 	fmt.Println("Test index name:", index)
 	docType := "test_doc_type"
+
+	if err != nil {
+		t.Fatal("Failed to put Environment mapping ", err)
+	}
 
 	idGenerator, err := snowflake.New(100)
 	if err != nil {
