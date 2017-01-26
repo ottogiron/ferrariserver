@@ -16,7 +16,7 @@ import (
 	oelastic "gopkg.in/olivere/elastic.v3"
 )
 
-func newTestStore(t *testing.T) (store.Worker, func()) {
+func newTestStore(t *testing.T) (store.Run, func()) {
 	client, err := oelastic.NewClient(
 		oelastic.SetSniff(false),
 	)
@@ -58,53 +58,53 @@ func newTestStore(t *testing.T) (store.Worker, func()) {
 	}
 }
 
-func Test_workerStore_Save(t *testing.T) {
-	w, clean := newTestStore(t)
+func Test_runStore_Save(t *testing.T) {
+	r, clean := newTestStore(t)
 	defer clean()
 	type args struct {
-		worker *models.Worker
+		run *models.Run
 	}
 	tests := []struct {
 		name    string
 		args    args
-		want    *models.Worker
+		want    *models.Run
 		wantErr bool
 	}{
-		{"Save", args{&models.Worker{}}, &models.Worker{}, false},
+		{"Save", args{&models.Run{WorkerID: "worker123"}}, &models.Run{WorkerID: "worker123"}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 
-			got, err := w.Save(tt.args.worker)
+			got, err := r.Save(tt.args.run)
 			if (err != nil) != tt.wantErr {
-				t.Errorf("workerStore.Save() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("runStore.Save() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 			if got.ID == "" {
-				t.Errorf("workerStore.Save() = got.ID = %v, want an id value", got.ID)
+				t.Errorf("runStore.Save() = got.ID = %v, want an id value", got.ID)
 			}
 
-			if !reflect.DeepEqual(got.Environment, tt.want.Environment) {
-				t.Errorf("workerStore.Save() = got.Output = %v, want %v", got.Environment, tt.want.Environment)
+			if !reflect.DeepEqual(got.WorkerID, tt.want.WorkerID) {
+				t.Errorf("runStore.Save() = got.Output = %v, want %v", got.WorkerID, tt.want.WorkerID)
 			}
 
 		})
 	}
 }
 
-func Test_workerStore_Get(t *testing.T) {
+func Test_runStore_Get(t *testing.T) {
 
-	w, clean := newTestStore(t)
+	r, clean := newTestStore(t)
 	defer clean()
 
-	testSaveWorker := &models.Worker{
-		Environment: map[string]string{"SOME_VAR": "some_value"},
+	testSavedRun := &models.Run{
+		WorkerID: "WorkerID123",
 	}
 
-	savedWorker, err := w.Save(testSaveWorker)
+	savedRun, err := r.Save(testSavedRun)
 
 	if err != nil {
-		t.Fatal("Failed to save test worker for Get test", err)
+		t.Fatal("Failed to save test run for Get test", err)
 	}
 
 	type args struct {
@@ -113,72 +113,72 @@ func Test_workerStore_Get(t *testing.T) {
 	tests := []struct {
 		name    string
 		args    args
-		want    *models.Worker
+		want    *models.Run
 		wantErr bool
 	}{
-		{"Get", args{savedWorker.ID}, savedWorker, false},
+		{"Get", args{savedRun.ID}, savedRun, false},
 		{"Get Not Found", args{"1234564788478478744"}, nil, true},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 
-			got, err := w.Get(tt.args.id)
+			got, err := r.Get(tt.args.id)
 			if (err != nil) != tt.wantErr {
-				t.Errorf("workerStore.Get() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("runStore.Get() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 			if tt.want != nil && got.ID != tt.want.ID {
-				t.Errorf("workerStore.Get() = %v, want %v", got, tt.want)
+				t.Errorf("runStore.Get() = %v, want %v", got, tt.want)
 			}
 		})
 	}
 }
 
-func Test_workerStore_Update(t *testing.T) {
-	w, clean := newTestStore(t)
+func Test_runStore_Update(t *testing.T) {
+	r, clean := newTestStore(t)
 	defer clean()
 
-	testSavedWorker := &models.Worker{
-		Environment: map[string]string{"SOME_VAR": "some_value"},
+	testSavedRun := &models.Run{
+		WorkerID: "worker123",
 	}
 
-	savedWorker, err := w.Save(testSavedWorker)
+	savedRun, err := r.Save(testSavedRun)
 
 	if err != nil {
 		t.Fatal("Failed to save test worker for Get test", err)
 	}
 
-	savedWorker.Environment = map[string]string{"SOME_VAR": "some_new_value"}
+	savedRun.WorkerID = "worker321"
 	type args struct {
-		id     string
-		worker *models.Worker
+		id  string
+		run *models.Run
 	}
 	tests := []struct {
 		name      string
 		args      args
-		wantSaved *models.Worker
+		wantSaved *models.Run
 		wantErr   bool
 	}{
-		{"Update", args{savedWorker.ID, savedWorker}, savedWorker, false},
+		{"Update", args{savedRun.ID, savedRun}, savedRun, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 
-			err := w.Update(tt.args.id, tt.args.worker)
+			err := r.Update(tt.args.id, tt.args.run)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("workerStore.Update() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 
-			got, err := w.Get(savedWorker.ID)
+			got, err := r.Get(savedRun.ID)
 
 			if err != nil {
 				t.Errorf("workerStore.Update() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 
-			if got.Environment["SOME_VAR"] != savedWorker.Environment["SOME_VAR"] {
+			if got.WorkerID != savedRun.WorkerID {
 				t.Errorf("workerStore.Get() = %v want %v", got, tt.wantSaved)
 			}
 

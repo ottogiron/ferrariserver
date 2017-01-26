@@ -13,8 +13,8 @@ import (
 	oelastic "gopkg.in/olivere/elastic.v3"
 )
 
-//WorkerStore implementation of a job store
-type workerStore struct {
+//RunStore implementation of a run store
+type runStore struct {
 	client       *oelastic.Client
 	index        string
 	docType      string
@@ -22,48 +22,48 @@ type workerStore struct {
 	refreshIndex string
 }
 
-//New returns a new instance of a worker store
-func New(options ...Option) store.Worker {
+//New returns a new instance of a run store
+func New(options ...Option) store.Run {
 
-	w := &workerStore{
+	r := &runStore{
 		refreshIndex: "true",
 	}
 
 	for _, option := range options {
-		option(w)
+		option(r)
 	}
 
-	return w
+	return r
 }
 
-func (w *workerStore) Save(worker *models.Worker) (*models.Worker, error) {
-	id, err := w.idGenerator.Mint()
+func (r *runStore) Save(run *models.Run) (*models.Run, error) {
+	id, err := r.idGenerator.Mint()
 
 	if err != nil {
 		return nil, errors.Wrap(err, "elastic.Store Failed to generate id for job ")
 	}
 
-	_, err = w.client.Index().
-		Index(w.index).
-		Type(w.docType).
-		Refresh(w.refreshIndex).
+	_, err = r.client.Index().
+		Index(r.index).
+		Type(r.docType).
+		Refresh(r.refreshIndex).
 		Id(id).
-		BodyJson(worker).
+		BodyJson(run).
 		Do(context.Background())
 
 	if err != nil {
-		return nil, errors.Wrapf(err, "elastic.Store Failed to index job %v", worker)
+		return nil, errors.Wrapf(err, "elastic.Store Failed to index job %v", run)
 	}
 
-	worker.ID = id
-	return worker, nil
+	run.ID = id
+	return run, nil
 }
 
-func (w *workerStore) Get(id string) (*models.Worker, error) {
-	res, err := w.client.Get().
-		Index(w.index).
-		Type(w.docType).
-		Refresh(w.refreshIndex).
+func (r *runStore) Get(id string) (*models.Run, error) {
+	res, err := r.client.Get().
+		Index(r.index).
+		Type(r.docType).
+		Refresh(r.refreshIndex).
 		Id(id).
 		Do(context.Background())
 
@@ -74,7 +74,7 @@ func (w *workerStore) Get(id string) (*models.Worker, error) {
 		return nil, errors.Wrapf(err, "elastic.Store Failed to get jobID=%s", id)
 	}
 
-	var job models.Worker
+	var job models.Run
 
 	err = json.Unmarshal(*res.Source, &job)
 
@@ -85,12 +85,12 @@ func (w *workerStore) Get(id string) (*models.Worker, error) {
 	return &job, nil
 }
 
-func (w *workerStore) Update(id string, worker *models.Worker) error {
+func (r *runStore) Update(id string, worker *models.Run) error {
 
-	_, err := w.client.Update().
-		Index(w.index).
-		Type(w.docType).
-		Refresh(w.refreshIndex).
+	_, err := r.client.Update().
+		Index(r.index).
+		Type(r.docType).
+		Refresh(r.refreshIndex).
 		Id(id).
 		Doc(worker).
 		Do(context.Background())
