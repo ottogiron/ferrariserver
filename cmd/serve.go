@@ -94,6 +94,7 @@ func init() {
 	serveCmd.Flags().StringP(keyFileKey, "k", "server.key", "The TLS key file")
 	serveCmd.Flags().Int64(recordLogsIntervalKey, 1000, "Interval to record logs to the underlying store in milliseconds")
 	serveCmd.Flags().String(elasticURLSKeys, "http://localhost:9200", "Coma separated list of elastic url's")
+	serveCmd.Flags().Bool(elasticSetSniffKey, false, "the elastic client  sniffes the cluster via the Nodes Info API")
 
 	viper.BindPFlag(rpcPortKey, serveCmd.Flags().Lookup(rpcPortKey))
 	viper.BindPFlag(tlsKey, serveCmd.Flags().Lookup(tlsKey))
@@ -101,4 +102,5 @@ func init() {
 	viper.BindPFlag(keyFileKey, serveCmd.Flags().Lookup(keyFileKey))
 	viper.BindPFlag(recordLogsIntervalKey, serveCmd.Flags().Lookup(recordLogsIntervalKey))
 	viper.BindPFlag(elasticURLSKeys, serveCmd.Flags().Lookup(elasticURLSKeys))
+	viper.BindPFlag(elasticSetSniffKey, serveCmd.Flags().Lookup(elasticSetSniffKey))
 }
