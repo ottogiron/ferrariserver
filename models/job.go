@@ -18,6 +18,7 @@ const (
 type Job struct {
 	ID        string
 	WorkerID  string
+	RunID     string
 	StartTime time.Time
 	EndTime   time.Time
 	JobStatus JobStatus
