@@ -16,11 +16,11 @@ const (
 
 //Job represents a job model
 type Job struct {
-	ID        string
-	WorkerID  string
-	RunID     string
-	StartTime time.Time
-	EndTime   time.Time
-	JobStatus JobStatus
-	Output    string
+	ID        string    `json:"id"`
+	WorkerID  string    `json:"worker_id"`
+	RunID     string    `json:"run_id"`
+	StartTime time.Time `json:"start_time"`
+	EndTime   time.Time `json:"end_time"`
+	JobStatus JobStatus `json:"job_status"`
+	Output    string    `json:"output"`
 }

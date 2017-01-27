@@ -28,19 +28,35 @@ func newTestStore(t *testing.T) (store.Worker, func()) {
 	index := "test_index" + strconv.Itoa(r.Int())
 	fmt.Println("Test index name:", index)
 	docType := "test_doc_type"
+
+	_, err = client.CreateIndex(index).
+		BodyJson(map[string]interface{}{
+			"settings": map[string]interface{}{
+				"number_of_shards": 1,
+			},
+		}).
+		Do(context.Background())
+
+	if err != nil {
+		t.Fatal("Failed to create index ", err)
+	}
+
 	_, err = client.PutMapping().
 		Index(index).
 		Type(docType).
 		BodyJson(map[string]interface{}{
-			docType: map[string]interface{}{
-				"properties": map[string]interface{}{
-					"environment": map[string]interface{}{
-						"type": "nested",
-					},
+			"properties": map[string]interface{}{
+				"environment": map[string]interface{}{
+					"type": "nested",
 				},
 			},
 		}).
 		Do(context.Background())
+
+	if err != nil {
+		t.Fatal("Failed to create document mappings ", err)
+	}
+
 	idGenerator, err := snowflake.New(100)
 	if err != nil {
 		t.Fatal("Failed to create new store snowflake generator")

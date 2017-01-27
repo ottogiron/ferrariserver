@@ -7,9 +7,7 @@ import (
 	"github.com/goadesign/goa/goagen/codegen"
 	genapp "github.com/goadesign/goa/goagen/gen_app"
 	genclient "github.com/goadesign/goa/goagen/gen_client"
-	genjs "github.com/goadesign/goa/goagen/gen_js"
 	genmain "github.com/goadesign/goa/goagen/gen_main"
-	genschema "github.com/goadesign/goa/goagen/gen_schema"
 	genswagger "github.com/goadesign/goa/goagen/gen_swagger"
 )
 
@@ -31,12 +29,6 @@ func main() {
 		),
 		genclient.NewGenerator(
 			genclient.API(design.Design),
-		),
-		genschema.NewGenerator(
-			genschema.API(design.Design),
-		),
-		genjs.NewGenerator(
-			genjs.API(design.Design),
 		),
 	)
 }

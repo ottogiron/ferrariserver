@@ -56,6 +56,31 @@ func JobStore(ctx context.Context, index string, docType string, client *elastic
 	if err != nil {
 		return nil, errors.Wrapf(err, "Failed to create elastic index %s", index)
 	}
+	_, err = client.PutMapping().
+		Index(index).
+		Type(docType).
+		BodyJson(map[string]interface{}{
+			"properties": map[string]interface{}{
+				"id": map[string]interface{}{
+					"type":  "string",
+					"index": "not_analized",
+				},
+				"worker_id": map[string]interface{}{
+					"type":  "string",
+					"index": "not_analized",
+				},
+				"run_id": map[string]interface{}{
+					"type":  "string",
+					"index": "not_analized",
+				},
+			},
+		}).
+		Do(ctx)
+
+	if err != nil {
+		return nil, errors.Wrapf(err, "Failed to put mappings for index %s and type %s", index, docType)
+	}
+
 	store := jobstore.New(
 		jobstore.SetContext(ctx),
 		jobstore.SetClient(client),

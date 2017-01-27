@@ -6,8 +6,8 @@ import (
 
 //JobLog represents a worker log
 type JobLog struct {
-	ID          string
-	JobID       string
-	Message     string
-	CreatedTime time.Time
+	ID          string    `json:"id"`
+	JobID       string    `json:"job_id"`
+	Message     string    `json:"message"`
+	CreatedTime time.Time `json:"created_time"`
 }

@@ -6,9 +6,9 @@ import (
 
 //Worker model for Worker
 type Worker struct {
-	ID          string
-	Parallel    int
-	Environment map[string]string
-	CreatedTime time.Time
-	UpdatedTime time.Time
+	ID          string            `json:"id"`
+	Parallel    int               `json:"parallel"`
+	Environment map[string]string `json:"environment"`
+	CreatedTime time.Time         `json:"created_time"`
+	UpdatedTime time.Time         `json:"updated_time"`
 }
