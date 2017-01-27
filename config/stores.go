@@ -8,6 +8,7 @@ import (
 	"github.com/ferrariframework/ferrariserver/store"
 	jobstore "github.com/ferrariframework/ferrariserver/store/elastic/job"
 	joblog "github.com/ferrariframework/ferrariserver/store/elastic/joblog"
+	"github.com/inconshreveable/log15"
 	"github.com/mattheath/kala/snowflake"
 	"github.com/pkg/errors"
 	elastic "gopkg.in/olivere/elastic.v3"
@@ -16,17 +17,12 @@ import (
 //JobStore configures a new instance of a job store
 func JobStore(ctx context.Context, index string, docType string, client *elastic.Client, idGenerator *snowflake.Snowflake) (store.Job, error) {
 
-	_, err := client.CreateIndex(index).
-		BodyJson(map[string]interface{}{
-			"settings": map[string]interface{}{
-				"number_of_shards": 1,
-			},
-		}).
-		Do(ctx)
+	err := createIndexIfDontExists(ctx, index, client)
 
 	if err != nil {
 		return nil, errors.Wrapf(err, "Failed to create elastic index %s", index)
 	}
+
 	_, err = client.PutMapping().
 		Index(index).
 		Type(docType).
@@ -34,15 +30,15 @@ func JobStore(ctx context.Context, index string, docType string, client *elastic
 			"properties": map[string]interface{}{
 				"id": map[string]interface{}{
 					"type":  "string",
-					"index": "not_analized",
+					"index": "not_analyzed",
 				},
 				"worker_id": map[string]interface{}{
 					"type":  "string",
-					"index": "not_analized",
+					"index": "not_analyzed",
 				},
 				"run_id": map[string]interface{}{
 					"type":  "string",
-					"index": "not_analized",
+					"index": "not_analyzed",
 				},
 			},
 		}).
@@ -66,13 +62,7 @@ func JobStore(ctx context.Context, index string, docType string, client *elastic
 //JobLogStore configures a new instance of a job store
 func JobLogStore(ctx context.Context, index string, docType string, client *elastic.Client, idGenerator *snowflake.Snowflake) (store.JobLog, error) {
 
-	_, err := client.CreateIndex(index).
-		BodyJson(map[string]interface{}{
-			"settings": map[string]interface{}{
-				"number_of_shards": 1,
-			},
-		}).
-		Do(ctx)
+	err := createIndexIfDontExists(ctx, index, client)
 
 	if err != nil {
 		return nil, errors.Wrapf(err, "Failed to create elastic index %s", index)
@@ -84,11 +74,11 @@ func JobLogStore(ctx context.Context, index string, docType string, client *elas
 			"properties": map[string]interface{}{
 				"id": map[string]interface{}{
 					"type":  "string",
-					"index": "not_analized",
+					"index": "not_analyzed",
 				},
 				"job_id": map[string]interface{}{
 					"type":  "string",
-					"index": "not_analized",
+					"index": "not_analyzed",
 				},
 			},
 		}).
@@ -119,4 +109,29 @@ func SnowFlakeGenerator() (*snowflake.Snowflake, error) {
 		return nil, errors.Wrap(err, "Failed to create new snowflake generator")
 	}
 	return generator, nil
+}
+
+func createIndexIfDontExists(ctx context.Context, name string, client *elastic.Client) error {
+
+	exists, err := client.IndexExists(name).Do(ctx)
+
+	if err != nil {
+		return errors.Wrapf(err, "Failed to validate index existance %s", name)
+	}
+	if !exists {
+		_, err = client.CreateIndex(name).
+			BodyJson(map[string]interface{}{
+				"settings": map[string]interface{}{
+					"number_of_shards": 1,
+				},
+			}).
+			Do(ctx)
+		if err != nil {
+			return errors.Wrapf(err, "Failed to create index with name %s", name)
+		}
+	} else {
+		log15.Warn("Elastic Index already exists skipping creation", "name", name)
+	}
+
+	return nil
 }

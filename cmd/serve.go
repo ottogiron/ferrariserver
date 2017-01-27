@@ -64,25 +64,29 @@ var serveCmd = &cobra.Command{
 		idGenerator, err := config.SnowFlakeGenerator()
 
 		if err != nil {
-			logger.Crit("Error creating idGenerator", err)
+			logger.Crit("Error creating idGenerator", "error", err)
+			return
 		}
 
 		elasticClient, err := config.ElasticClient(elasticSetSniff, elasticURLs)
 
 		if err != nil {
-			logger.Crit("Error creating elastic client", err)
+			logger.Crit("Error creating elastic client", "error", err)
+			return
 		}
 
 		jobStore, err := config.JobStore(ctx, "job", "job", elasticClient, idGenerator)
 
 		if err != nil {
-			logger.Crit("Error creating jobStore", err)
+			logger.Crit("Error creating jobStore", "error", err)
+			return
 		}
 
 		jobLogStore, err := config.JobLogStore(ctx, "joblog", "joblog", elasticClient, idGenerator)
 
 		if err != nil {
-			logger.Crit("Error creating jobLogStore", err)
+			logger.Crit("Error creating jobLogStore", "error", err)
+			return
 		}
 		jobService := config.JobService(ctx, logger, jobStore, jobLogStore, true, time.Duration(recordLogsInterval))
 		gen.RegisterJobServiceServer(grpcServer, rpcservices.NewJobService(jobService))
