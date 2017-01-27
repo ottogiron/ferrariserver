@@ -8,7 +8,7 @@ import (
 
 	"time"
 
-	"github.com/ferrariframework/ferrariserver/services/job"
+	jobservice "github.com/ferrariframework/ferrariserver/services/job"
 	"github.com/ferrariframework/ferrariserver/store"
 	jobstore "github.com/ferrariframework/ferrariserver/store/elastic/job"
 	"github.com/inconshreveable/log15"
@@ -30,9 +30,16 @@ func ElasticClient(setSniff bool, urls ...string) (*elastic.Client, error) {
 }
 
 //JobService Configures a new instance of a job service
-func JobService(ctx context.Context, logger log15.Logger, jobStore store.Job, recordLogs bool, recordLogsInterval time.Duration) job.Service {
+func JobService(ctx context.Context, logger log15.Logger, jobStore store.Job, recordLogs bool, recordLogsInterval time.Duration) jobservice.Service {
 	clogger := logger.New("service", "job")
-	return job.New(ctx, clogger, jobStore, recordLogs, recordLogsInterval)
+
+	return jobservice.New(
+		jobservice.SetContext(ctx),
+		jobservice.SetLogger(clogger),
+		jobservice.SetJobStore(jobStore),
+		jobservice.SetRecordLogs(recordLogs),
+		jobservice.SetRecordLogsInterval(recordLogsInterval),
+	)
 }
 
 //JobStore configures a new instance of a job store

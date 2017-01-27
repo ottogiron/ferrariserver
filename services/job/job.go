@@ -21,17 +21,22 @@ type Service interface {
 }
 
 //New retuns a new job service
-func New(ctx context.Context, logger log15.Logger, jobStore store.Job, recordLogs bool, recordLogInterval time.Duration) *Job {
+func New(options ...Option) *Job {
 	service := &Job{
-		jobStore:          jobStore,
-		ctx:               ctx,
-		recordLogInterval: recordLogInterval,
-		logger:            logger,
-	}
-	if recordLogs {
-		service.startRecordingLogs()
+
+		ctx:               context.Background(),
+		recordLogInterval: time.Millisecond * 500,
+		logger:            log15.New("service", "job"),
+		recordLogs:        false,
 	}
 
+	for _, option := range options {
+		option(service)
+	}
+
+	if service.recordLogs {
+		service.startRecordingLogs()
+	}
 	return service
 }
 
@@ -39,10 +44,12 @@ func New(ctx context.Context, logger log15.Logger, jobStore store.Job, recordLog
 type Job struct {
 	mu                sync.Mutex
 	jobStore          store.Job
+	jobLogStore       store.JobLog
 	recordedLogs      []*models.JobLog
 	ctx               context.Context
 	recordLogInterval time.Duration
 	logger            log15.Logger
+	recordLogs        bool
 }
 
 //Save saves a new job
