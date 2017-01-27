@@ -3,44 +3,15 @@ package config
 import (
 	"context"
 	"math/rand"
-
-	elastic "gopkg.in/olivere/elastic.v3"
-
 	"time"
 
-	jobservice "github.com/ferrariframework/ferrariserver/services/job"
 	"github.com/ferrariframework/ferrariserver/store"
 	jobstore "github.com/ferrariframework/ferrariserver/store/elastic/job"
-	"github.com/inconshreveable/log15"
+	joblog "github.com/ferrariframework/ferrariserver/store/elastic/joblog"
 	"github.com/mattheath/kala/snowflake"
 	"github.com/pkg/errors"
+	elastic "gopkg.in/olivere/elastic.v3"
 )
-
-//ElasticClient returns a new instance of an elastic client
-func ElasticClient(setSniff bool, urls ...string) (*elastic.Client, error) {
-	client, err := elastic.NewClient(
-		elastic.SetURL(urls...),
-		elastic.SetSniff(setSniff),
-	)
-
-	if err != nil {
-		return nil, errors.Wrapf(err, "Failed to create elastic client urls=%v setSniff=%v", urls, setSniff)
-	}
-	return client, nil
-}
-
-//JobService Configures a new instance of a job service
-func JobService(ctx context.Context, logger log15.Logger, jobStore store.Job, recordLogs bool, recordLogsInterval time.Duration) jobservice.Service {
-	clogger := logger.New("service", "job")
-
-	return jobservice.New(
-		jobservice.SetContext(ctx),
-		jobservice.SetLogger(clogger),
-		jobservice.SetJobStore(jobStore),
-		jobservice.SetRecordLogs(recordLogs),
-		jobservice.SetRecordLogsInterval(recordLogsInterval),
-	)
-}
 
 //JobStore configures a new instance of a job store
 func JobStore(ctx context.Context, index string, docType string, client *elastic.Client, idGenerator *snowflake.Snowflake) (store.Job, error) {
@@ -88,6 +59,52 @@ func JobStore(ctx context.Context, index string, docType string, client *elastic
 		jobstore.SetDocType(docType),
 		jobstore.SetIDGenerator(idGenerator),
 		jobstore.SetRefreshIndex("true"),
+	)
+	return store, nil
+}
+
+//JobLogStore configures a new instance of a job store
+func JobLogStore(ctx context.Context, index string, docType string, client *elastic.Client, idGenerator *snowflake.Snowflake) (store.JobLog, error) {
+
+	_, err := client.CreateIndex(index).
+		BodyJson(map[string]interface{}{
+			"settings": map[string]interface{}{
+				"number_of_shards": 1,
+			},
+		}).
+		Do(ctx)
+
+	if err != nil {
+		return nil, errors.Wrapf(err, "Failed to create elastic index %s", index)
+	}
+	_, err = client.PutMapping().
+		Index(index).
+		Type(docType).
+		BodyJson(map[string]interface{}{
+			"properties": map[string]interface{}{
+				"id": map[string]interface{}{
+					"type":  "string",
+					"index": "not_analized",
+				},
+				"job_id": map[string]interface{}{
+					"type":  "string",
+					"index": "not_analized",
+				},
+			},
+		}).
+		Do(ctx)
+
+	if err != nil {
+		return nil, errors.Wrapf(err, "Failed to put mappings for index %s and type %s", index, docType)
+	}
+
+	store := joblog.New(
+		joblog.SetContext(ctx),
+		joblog.SetClient(client),
+		joblog.SetIndex(index),
+		joblog.SetDocType(docType),
+		joblog.SetIDGenerator(idGenerator),
+		joblog.SetRefreshIndex("true"),
 	)
 	return store, nil
 }

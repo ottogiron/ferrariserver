@@ -76,8 +76,15 @@ func (j *Job) startRecordingLogs() {
 		for {
 			select {
 			case <-c:
-			//Record logs in batch
+				j.jobLogStore.Save(j.recordedLogs)
+				j.mu.Lock()
+				j.recordedLogs = nil
+				j.mu.Unlock()
 			case <-j.ctx.Done():
+				j.jobLogStore.Save(j.recordedLogs)
+				j.mu.Lock()
+				j.recordedLogs = nil
+				j.mu.Unlock()
 				return
 			}
 		}

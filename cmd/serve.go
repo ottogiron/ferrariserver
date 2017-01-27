@@ -78,7 +78,13 @@ var serveCmd = &cobra.Command{
 		if err != nil {
 			logger.Crit("Error creating jobStore", err)
 		}
-		jobService := config.JobService(ctx, logger, jobStore, true, time.Duration(recordLogsInterval))
+
+		jobLogStore, err := config.JobLogStore(ctx, "joblog", "joblog", elasticClient, idGenerator)
+
+		if err != nil {
+			logger.Crit("Error creating jobLogStore", err)
+		}
+		jobService := config.JobService(ctx, logger, jobStore, jobLogStore, true, time.Duration(recordLogsInterval))
 		gen.RegisterJobServiceServer(grpcServer, rpcservices.NewJobService(jobService))
 		grpcServer.Serve(lis)
 
@@ -92,7 +98,7 @@ func init() {
 	serveCmd.Flags().BoolP(tlsKey, "t", false, "Connection uses TLS if true, else plain TCP")
 	serveCmd.Flags().StringP(certFileKey, "c", "server.pem", "The TLS cert file")
 	serveCmd.Flags().StringP(keyFileKey, "k", "server.key", "The TLS key file")
-	serveCmd.Flags().Int64(recordLogsIntervalKey, 1000, "Interval to record logs to the underlying store in milliseconds")
+	serveCmd.Flags().Int64(recordLogsIntervalKey, 500, "Interval to record logs to the underlying store in milliseconds")
 	serveCmd.Flags().String(elasticURLSKeys, "http://localhost:9200", "Coma separated list of elastic url's")
 	serveCmd.Flags().Bool(elasticSetSniffKey, false, "the elastic client  sniffes the cluster via the Nodes Info API")
 
