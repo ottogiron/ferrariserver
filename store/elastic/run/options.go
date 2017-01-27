@@ -1,10 +1,21 @@
 package worker
 
-import oelastic "gopkg.in/olivere/elastic.v3"
-import "github.com/mattheath/kala/snowflake"
+import (
+	"context"
+
+	"github.com/mattheath/kala/snowflake"
+	oelastic "gopkg.in/olivere/elastic.v3"
+)
 
 //Option defines an elastic job store option
 type Option func(*runStore)
+
+//SetContext set the context of this store
+func SetContext(ctx context.Context) Option {
+	return func(runStore *runStore) {
+		runStore.ctx = ctx
+	}
+}
 
 //SetClient sets an elastic client for this store
 func SetClient(client *oelastic.Client) Option {

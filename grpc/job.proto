@@ -40,10 +40,9 @@ message Worker {
 }
 
 message JobLog {
-    string worker_id = 1; 
-    string run_id = 2;
-    string job_id    = 3;
-    bytes message   = 4;
+    string run_id =1;
+    string job_id    = 2;
+    bytes message   = 3;
 }
 
 message Empty {

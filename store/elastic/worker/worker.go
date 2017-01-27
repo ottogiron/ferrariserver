@@ -20,6 +20,7 @@ type workerStore struct {
 	docType      string
 	idGenerator  *snowflake.Snowflake
 	refreshIndex string
+	ctx          context.Context
 }
 
 //New returns a new instance of a worker store
@@ -27,6 +28,7 @@ func New(options ...Option) store.Worker {
 
 	w := &workerStore{
 		refreshIndex: "true",
+		ctx:          context.Background(),
 	}
 
 	for _, option := range options {
@@ -49,7 +51,7 @@ func (w *workerStore) Save(worker *models.Worker) (*models.Worker, error) {
 		Refresh(w.refreshIndex).
 		Id(id).
 		BodyJson(worker).
-		Do(context.Background())
+		Do(w.ctx)
 
 	if err != nil {
 		return nil, errors.Wrapf(err, "elastic.Store Failed to index job %v", worker)
@@ -65,7 +67,7 @@ func (w *workerStore) Get(id string) (*models.Worker, error) {
 		Type(w.docType).
 		Refresh(w.refreshIndex).
 		Id(id).
-		Do(context.Background())
+		Do(w.ctx)
 
 	if err != nil {
 		if oelastic.IsNotFound(err) {
@@ -93,7 +95,7 @@ func (w *workerStore) Update(id string, worker *models.Worker) error {
 		Refresh(w.refreshIndex).
 		Id(id).
 		Doc(worker).
-		Do(context.Background())
+		Do(w.ctx)
 
 	if err != nil {
 		if oelastic.IsNotFound(err) {

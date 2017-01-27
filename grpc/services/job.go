@@ -61,9 +61,8 @@ func (j *JobService) RecordLog(stream gen.JobService_RecordLogServer) error {
 		}
 
 		j.jobService.RecordLog(&models.JobLog{
-			WorkerID:    jobLog.WorkerId,
 			JobID:       jobLog.JobId,
-			Message:     jobLog.Message,
+			Message:     string(jobLog.Message),
 			CreatedTime: time.Now(),
 		})
 	}

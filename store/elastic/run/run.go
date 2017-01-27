@@ -20,6 +20,7 @@ type runStore struct {
 	docType      string
 	idGenerator  *snowflake.Snowflake
 	refreshIndex string
+	ctx          context.Context
 }
 
 //New returns a new instance of a run store
@@ -27,6 +28,7 @@ func New(options ...Option) store.Run {
 
 	r := &runStore{
 		refreshIndex: "true",
+		ctx:          context.Background(),
 	}
 
 	for _, option := range options {
@@ -49,7 +51,7 @@ func (r *runStore) Save(run *models.Run) (*models.Run, error) {
 		Refresh(r.refreshIndex).
 		Id(id).
 		BodyJson(run).
-		Do(context.Background())
+		Do(r.ctx)
 
 	if err != nil {
 		return nil, errors.Wrapf(err, "elastic.Store Failed to index job %v", run)
@@ -65,7 +67,7 @@ func (r *runStore) Get(id string) (*models.Run, error) {
 		Type(r.docType).
 		Refresh(r.refreshIndex).
 		Id(id).
-		Do(context.Background())
+		Do(r.ctx)
 
 	if err != nil {
 		if oelastic.IsNotFound(err) {
@@ -93,7 +95,7 @@ func (r *runStore) Update(id string, worker *models.Run) error {
 		Refresh(r.refreshIndex).
 		Id(id).
 		Doc(worker).
-		Do(context.Background())
+		Do(r.ctx)
 
 	if err != nil {
 		if oelastic.IsNotFound(err) {

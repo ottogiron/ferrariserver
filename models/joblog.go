@@ -6,8 +6,8 @@ import (
 
 //JobLog represents a worker log
 type JobLog struct {
-	WorkerID    string
+	ID          string
 	JobID       string
-	Message     []byte
+	Message     string
 	CreatedTime time.Time
 }
