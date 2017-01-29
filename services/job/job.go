@@ -89,13 +89,14 @@ func (j *Job) startRecordingLogs() {
 }
 
 func (j *Job) rrecordLogs() {
+	j.mu.Lock()
+	defer j.mu.Unlock()
 	if len(j.recordedLogs) > 0 {
 		err := j.jobLogStore.Save(j.recordedLogs)
 		if err != nil {
 			j.logger.Error("Failed to store log", "msg", err, "logs", j.recordedLogs)
 		}
-		j.mu.Lock()
 		j.recordedLogs = nil
-		j.mu.Unlock()
+
 	}
 }
