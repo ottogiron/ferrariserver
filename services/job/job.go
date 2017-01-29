@@ -21,7 +21,7 @@ type Service interface {
 	RecordLog(*models.JobLog) error
 }
 
-//New retuns a new job service
+//New returns a new job service
 func New(options ...Option) *Job {
 	service := &Job{
 

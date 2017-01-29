@@ -8,7 +8,7 @@ import (
 type JobStatus int
 
 const (
-	//JobStatusSucess represents a succeded job status
+	//JobStatusSucess represents a succeeded job status
 	JobStatusSucess JobStatus = 0
 	//JobstatusFailed represents a failed job status
 	JobstatusFailed JobStatus = 1
