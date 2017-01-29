@@ -3,7 +3,6 @@ package job
 import (
 	"context"
 
-	"github.com/mattheath/kala/snowflake"
 	oelastic "gopkg.in/olivere/elastic.v3"
 )
 
@@ -35,13 +34,6 @@ func SetIndex(index string) Option {
 func SetDocType(docType string) Option {
 	return func(jobStore *jobStore) {
 		jobStore.docType = docType
-	}
-}
-
-//SetIDGenerator sets an snoflake ID generator
-func SetIDGenerator(idGenerator *snowflake.Snowflake) Option {
-	return func(jobStore *jobStore) {
-		jobStore.idGenerator = idGenerator
 	}
 }
 

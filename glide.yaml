@@ -8,6 +8,7 @@ import:
   version: ^1.1.0
 - package: gopkg.in/olivere/elastic.v3
   version: ^5.0.18
-- package: github.com/mattheath/kala
 - package: github.com/inconshreveable/log15
   version: ^2.11.0
+- package: github.com/rs/xid
+  version: ^1.0.0

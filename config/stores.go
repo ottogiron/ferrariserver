@@ -2,20 +2,17 @@ package config
 
 import (
 	"context"
-	"math/rand"
-	"time"
 
 	"github.com/ferrariframework/ferrariserver/store"
 	jobstore "github.com/ferrariframework/ferrariserver/store/elastic/job"
 	joblog "github.com/ferrariframework/ferrariserver/store/elastic/joblog"
 	"github.com/inconshreveable/log15"
-	"github.com/mattheath/kala/snowflake"
 	"github.com/pkg/errors"
 	elastic "gopkg.in/olivere/elastic.v3"
 )
 
 //JobStore configures a new instance of a job store
-func JobStore(ctx context.Context, index string, docType string, client *elastic.Client, idGenerator *snowflake.Snowflake) (store.Job, error) {
+func JobStore(ctx context.Context, index string, docType string, client *elastic.Client) (store.Job, error) {
 
 	err := createIndexIfDontExists(ctx, index, client)
 
@@ -53,14 +50,13 @@ func JobStore(ctx context.Context, index string, docType string, client *elastic
 		jobstore.SetClient(client),
 		jobstore.SetIndex(index),
 		jobstore.SetDocType(docType),
-		jobstore.SetIDGenerator(idGenerator),
 		jobstore.SetRefreshIndex("true"),
 	)
 	return store, nil
 }
 
 //JobLogStore configures a new instance of a job store
-func JobLogStore(ctx context.Context, index string, docType string, client *elastic.Client, idGenerator *snowflake.Snowflake) (store.JobLog, error) {
+func JobLogStore(ctx context.Context, index string, docType string, client *elastic.Client) (store.JobLog, error) {
 
 	err := createIndexIfDontExists(ctx, index, client)
 
@@ -93,22 +89,10 @@ func JobLogStore(ctx context.Context, index string, docType string, client *elas
 		joblog.SetClient(client),
 		joblog.SetIndex(index),
 		joblog.SetDocType(docType),
-		joblog.SetIDGenerator(idGenerator),
+
 		joblog.SetRefreshIndex("true"),
 	)
 	return store, nil
-}
-
-//SnowFlakeGenerator creates a new instance of an snowflake generator
-func SnowFlakeGenerator() (*snowflake.Snowflake, error) {
-	s1 := rand.NewSource(time.Now().UnixNano())
-	r1 := rand.New(s1)
-	workerID := r1.Uint32()
-	generator, err := snowflake.New(workerID)
-	if err != nil {
-		return nil, errors.Wrap(err, "Failed to create new snowflake generator")
-	}
-	return generator, nil
 }
 
 func createIndexIfDontExists(ctx context.Context, name string, client *elastic.Client) error {

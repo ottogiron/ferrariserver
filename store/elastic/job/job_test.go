@@ -12,7 +12,6 @@ import (
 
 	"github.com/ferrariframework/ferrariserver/models"
 	"github.com/ferrariframework/ferrariserver/store"
-	"github.com/mattheath/kala/snowflake"
 	oelastic "gopkg.in/olivere/elastic.v3"
 )
 
@@ -33,15 +32,10 @@ func newTestStore(t *testing.T) (store.Job, func()) {
 		t.Fatal("Failed to put Environment mapping ", err)
 	}
 
-	idGenerator, err := snowflake.New(100)
-	if err != nil {
-		t.Fatal("Failed to create new store snowflake generator")
-	}
 	s := New(
 		SetClient(client),
 		SetIndex(index),
 		SetDocType(docType),
-		SetIDGenerator(idGenerator),
 		SetRefreshIndex("true"),
 	)
 	return s, func() {

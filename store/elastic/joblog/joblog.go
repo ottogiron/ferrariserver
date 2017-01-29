@@ -5,17 +5,18 @@ import (
 
 	"github.com/ferrariframework/ferrariserver/models"
 	"github.com/ferrariframework/ferrariserver/store"
-	"github.com/mattheath/kala/snowflake"
+	"github.com/rs/xid"
+
 	"github.com/pkg/errors"
 	oelastic "gopkg.in/olivere/elastic.v3"
 )
 
 //jobLogStore implementation of a job store
 type jobLogStore struct {
-	client       *oelastic.Client
-	index        string
-	docType      string
-	idGenerator  *snowflake.Snowflake
+	client  *oelastic.Client
+	index   string
+	docType string
+
 	refreshIndex string
 	ctx          context.Context
 }
@@ -39,10 +40,7 @@ func (j *jobLogStore) Save(logs []*models.JobLog) error {
 	bulkService := j.client.Bulk().Index(j.index).Type(j.docType)
 
 	for _, log := range logs {
-		id, err := j.idGenerator.Mint()
-		if err != nil {
-			return errors.Wrap(err, "Failed to generate id when saving logs")
-		}
+		id := xid.New().String()
 		log.ID = id
 		r := oelastic.NewBulkIndexRequest().Id(id).Doc(log)
 		bulkService.Add(r)

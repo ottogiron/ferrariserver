@@ -10,6 +10,7 @@ import (
 	"github.com/ferrariframework/ferrariserver/store/errortypes"
 	"github.com/mattheath/kala/snowflake"
 	"github.com/pkg/errors"
+	"github.com/rs/xid"
 	oelastic "gopkg.in/olivere/elastic.v3"
 )
 
@@ -39,13 +40,9 @@ func New(options ...Option) store.Run {
 }
 
 func (r *runStore) Save(run *models.Run) (*models.Run, error) {
-	id, err := r.idGenerator.Mint()
+	id := xid.New().String()
 
-	if err != nil {
-		return nil, errors.Wrap(err, "elastic.Store Failed to generate id for job ")
-	}
-
-	_, err = r.client.Index().
+	_, err := r.client.Index().
 		Index(r.index).
 		Type(r.docType).
 		Refresh(r.refreshIndex).

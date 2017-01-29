@@ -8,7 +8,8 @@ import (
 	"github.com/ferrariframework/ferrariserver/models"
 	"github.com/ferrariframework/ferrariserver/store"
 	"github.com/ferrariframework/ferrariserver/store/errortypes"
-	"github.com/mattheath/kala/snowflake"
+	"github.com/rs/xid"
+
 	"github.com/pkg/errors"
 	oelastic "gopkg.in/olivere/elastic.v3"
 )
@@ -18,7 +19,6 @@ type jobStore struct {
 	client       *oelastic.Client
 	index        string
 	docType      string
-	idGenerator  *snowflake.Snowflake
 	refreshIndex string
 	ctx          context.Context
 }
@@ -39,13 +39,9 @@ func New(options ...Option) store.Job {
 }
 
 func (j *jobStore) Save(job *models.Job) (*models.Job, error) {
-	id, err := j.idGenerator.Mint()
+	id := xid.New().String()
 
-	if err != nil {
-		return nil, errors.Wrap(err, "elastic.Store Failed to generate id for job ")
-	}
-
-	_, err = j.client.Index().
+	_, err := j.client.Index().
 		Index(j.index).
 		Type(j.docType).
 		Refresh(j.refreshIndex).
