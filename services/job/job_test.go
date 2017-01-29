@@ -17,7 +17,9 @@ import (
 var testWorkerID = "worker123"
 var testWorkerIDWithError = "worker123withError"
 
-func newJobService(recordLogs bool, logsInterval time.Duration, t *testing.T) *Job {
+var testJobLogIDWithError = "joblogWithError"
+
+func newJobService(ctx context.Context, recordLogs bool, logsInterval time.Duration, t *testing.T) *Job {
 	logger := log15.New()
 	logger.SetHandler(log15.DiscardHandler())
 	j := New(
@@ -33,7 +35,7 @@ func newJobService(recordLogs bool, logsInterval time.Duration, t *testing.T) *J
 
 func TestJob_Save(t *testing.T) {
 
-	j := newJobService(false, 0, t)
+	j := newJobService(context.Background(), false, 0, t)
 	type args struct {
 		job *models.Job
 	}
@@ -85,7 +87,7 @@ func TestJob_Save(t *testing.T) {
 }
 
 func TestJob_RecordLog(t *testing.T) {
-	j := newJobService(false, 0, t)
+	j := newJobService(context.Background(), false, 0, t)
 	type args struct {
 		log *models.JobLog
 	}
@@ -129,16 +131,35 @@ func TestJob_RecordLog(t *testing.T) {
 func TestJob_startRecordingLogs(t *testing.T) {
 	logInterval := time.Duration(500)
 	setLogInterval := true
-	j := newJobService(setLogInterval, logInterval, t)
+
 	tests := []struct {
-		name string
+		name         string
+		recordedLogs []*models.JobLog
 	}{
-	// TODO: Add test cases.
+		{
+			"Record logs",
+			[]*models.JobLog{
+				&models.JobLog{},
+				&models.JobLog{},
+			},
+		},
+		{
+			"Record logs with errors",
+			[]*models.JobLog{
+				&models.JobLog{ID: testJobLogIDWithError},
+			},
+		},
 	}
 	for _, tt := range tests {
+		ctx, cancel := context.WithCancel(context.Background())
+		j := newJobService(ctx, setLogInterval, logInterval, t)
 		t.Run(tt.name, func(t *testing.T) {
-
+			defer cancel()
 			j.startRecordingLogs()
+			for _, log := range tt.recordedLogs {
+				j.RecordLog(log)
+			}
+			time.Sleep(logInterval + time.Duration(200))
 		})
 	}
 }
@@ -158,4 +179,11 @@ func (*mockJobStore) Save(model *models.Job) (*models.Job, error) {
 
 type mockJobLogStore struct {
 	store.JobLog
+}
+
+func (*mockJobLogStore) Save(jobLogs []*models.JobLog) error {
+	if len(jobLogs) == 1 && jobLogs[0].ID == testJobLogIDWithError {
+		return errors.New("Failed to process jobs")
+	}
+	return nil
 }
