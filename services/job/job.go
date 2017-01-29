@@ -2,6 +2,7 @@ package job
 
 import (
 	"context"
+	"fmt"
 	"sync"
 
 	"time"
@@ -75,11 +76,12 @@ func (j *Job) startRecordingLogs() {
 		c := time.Tick(j.recordLogInterval)
 		for {
 			select {
-			case <-c:
-				j.rrecordLogs()
 			case <-j.ctx.Done():
+				fmt.Print("Context canceled")
 				j.rrecordLogs()
 				return
+			case <-c:
+				j.rrecordLogs()
 			}
 		}
 

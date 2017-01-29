@@ -23,7 +23,7 @@ func newJobService(ctx context.Context, recordLogs bool, logsInterval time.Durat
 	logger := log15.New()
 	logger.SetHandler(log15.DiscardHandler())
 	j := New(
-		SetContext(context.Background()),
+		SetContext(ctx),
 		SetLogger(logger),
 		SetJobStore(&mockJobStore{}),
 		SetJobLogStore(&mockJobLogStore{}),
@@ -124,6 +124,7 @@ func TestJob_RecordLog(t *testing.T) {
 			if !reflect.DeepEqual(j.recordedLogs, tt.wantRecordedLogs) {
 				t.Errorf("Job.RecordLog() recordedLogs = %v, want %v", j.recordedLogs, tt.wantRecordedLogs)
 			}
+
 		})
 	}
 }
@@ -151,15 +152,20 @@ func TestJob_startRecordingLogs(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
-		ctx, cancel := context.WithCancel(context.Background())
-		j := newJobService(ctx, setLogInterval, logInterval, t)
+
 		t.Run(tt.name, func(t *testing.T) {
+			ctx, cancel := context.WithCancel(context.Background())
+			j := newJobService(ctx, setLogInterval, logInterval, t)
 			defer cancel()
 			j.startRecordingLogs()
 			for _, log := range tt.recordedLogs {
 				j.RecordLog(log)
 			}
-			time.Sleep(logInterval + time.Duration(200))
+			time.Sleep(logInterval + time.Duration(400))
+			//this should be stored when te context is cancelled
+			for _, log := range tt.recordedLogs {
+				j.RecordLog(log)
+			}
 		})
 	}
 }
