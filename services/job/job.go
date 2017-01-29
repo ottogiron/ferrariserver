@@ -76,23 +76,24 @@ func (j *Job) startRecordingLogs() {
 		for {
 			select {
 			case <-c:
-				if len(j.recordedLogs) > 0 {
-					j.jobLogStore.Save(j.recordedLogs)
-					j.mu.Lock()
-					j.recordedLogs = nil
-					j.mu.Unlock()
-				}
-
+				j.rrecordLogs()
 			case <-j.ctx.Done():
-				if len(j.recordedLogs) > 0 {
-					j.jobLogStore.Save(j.recordedLogs)
-					j.mu.Lock()
-					j.recordedLogs = nil
-					j.mu.Unlock()
-				}
+				j.rrecordLogs()
 				return
 			}
 		}
 
 	}()
+}
+
+func (j *Job) rrecordLogs() {
+	if len(j.recordedLogs) > 0 {
+		err := j.jobLogStore.Save(j.recordedLogs)
+		if err != nil {
+			j.logger.Error("Failed to store log", "msg", err, "logs", j.recordedLogs)
+		}
+		j.mu.Lock()
+		j.recordedLogs = nil
+		j.mu.Unlock()
+	}
 }
