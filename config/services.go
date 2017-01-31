@@ -24,19 +24,19 @@ import (
 
 const (
 	//RPCPortKey key for the grpc port configuration
-	RPCPortKey = "rpc_port"
+	RPCPortKey = "rpc-port"
 	//CertFileKey key for the grpc file key configuration
-	CertFileKey = "cert_file"
+	CertFileKey = "cert-file"
 	//KeyFileKey key for the grpc key file
-	KeyFileKey = "key_file"
+	KeyFileKey = "key-file"
 	//TLSKey key for the grpc tls flag
 	TLSKey = "tls"
 	//RecordLogsIntervalKey record logs  interval key
-	RecordLogsIntervalKey = "record_logs_interval"
+	RecordLogsIntervalKey = "record-logs-interval"
 	//ElasticURLSKeys key for the elastic urls
-	ElasticURLSKeys = "elastic_urls"
+	ElasticURLSKeys = "elastic-urls"
 	//ElasticSetSniffKey key for the set sniff for elastic flag
-	ElasticSetSniffKey = "elastic_set_sniff"
+	ElasticSetSniffKey = "elastic-set-sniff"
 )
 
 //GRPCServer creates a configured instance of a rpc server
