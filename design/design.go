@@ -1,6 +1,10 @@
 package design
 
 import (
+	//Something
+	_ "github.com/ferrariframework/ferrariserver/design/mediatypes"
+	_ "github.com/ferrariframework/ferrariserver/design/resources"
+	_ "github.com/ferrariframework/ferrariserver/design/usertypes"
 	. "github.com/goadesign/goa/design"
 	. "github.com/goadesign/goa/design/apidsl"
 )

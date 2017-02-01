@@ -6,3 +6,59 @@
 // The content of this file is auto-generated, DO NOT MODIFY
 
 package client
+
+import "net/http"
+
+// A ferrari worker (default view)
+//
+// Identifier: application/vnd.worker+json; view=default
+type Worker struct {
+	// Description of the worker
+	Description *string `form:"description,omitempty" json:"description,omitempty" xml:"description,omitempty"`
+	// ID of the worker
+	ID *string `form:"id,omitempty" json:"id,omitempty" xml:"id,omitempty"`
+	// Worker links
+	Links []*ResourceLink `form:"links,omitempty" json:"links,omitempty" xml:"links,omitempty"`
+	// Name of the worker
+	Name *string `form:"name,omitempty" json:"name,omitempty" xml:"name,omitempty"`
+}
+
+// DecodeWorker decodes the Worker instance encoded in resp body.
+func (c *Client) DecodeWorker(resp *http.Response) (*Worker, error) {
+	var decoded Worker
+	err := c.Decoder.Decode(&decoded, resp.Body, resp.Header.Get("Content-Type"))
+	return &decoded, err
+}
+
+// WorkerCollection is the media type for an array of Worker (default view)
+//
+// Identifier: application/vnd.worker+json; type=collection; view=default
+type WorkerCollection []*Worker
+
+// DecodeWorkerCollection decodes the WorkerCollection instance encoded in resp body.
+func (c *Client) DecodeWorkerCollection(resp *http.Response) (WorkerCollection, error) {
+	var decoded WorkerCollection
+	err := c.Decoder.Decode(&decoded, resp.Body, resp.Header.Get("Content-Type"))
+	return decoded, err
+}
+
+// A list of workers (default view)
+//
+// Identifier: application/vnd.workers+json; view=default
+type Workers struct {
+	// Response items
+	Items WorkerCollection `form:"items,omitempty" json:"items,omitempty" xml:"items,omitempty"`
+	// List of workers links
+	Links []*ResourceLink `form:"links,omitempty" json:"links,omitempty" xml:"links,omitempty"`
+	// Total number of items in the collection
+	TotalItems *int `form:"total_items,omitempty" json:"total_items,omitempty" xml:"total_items,omitempty"`
+	// Total number of pages in the collection
+	TotalPages *int `form:"total_pages,omitempty" json:"total_pages,omitempty" xml:"total_pages,omitempty"`
+}
+
+// DecodeWorkers decodes the Workers instance encoded in resp body.
+func (c *Client) DecodeWorkers(resp *http.Response) (*Workers, error) {
+	var decoded Workers
+	err := c.Decoder.Decode(&decoded, resp.Body, resp.Header.Get("Content-Type"))
+	return &decoded, err
+}
