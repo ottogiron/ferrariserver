@@ -6,8 +6,8 @@ import (
 	. "github.com/goadesign/goa/design/apidsl"
 )
 
-//Worker Defines a  worker media type
-var Worker = MediaType("application/vnd.worker+json", func() {
+//WorkerMedia Defines a  worker media type
+var WorkerMedia = MediaType("application/vnd.worker+json", func() {
 	Description("A ferrari worker")
 
 	Attributes(func() {
@@ -31,14 +31,16 @@ var Worker = MediaType("application/vnd.worker+json", func() {
 		Attribute("description")
 		Attribute("links")
 	})
+
+	
 })
 
-//Workers definition of workers media type
-var Workers = MediaType("application/vnd.workers+json", func() {
+//WorkersMedia definition of workers media type
+var WorkersMedia = MediaType("application/vnd.workers+json", func() {
 	Description("A list of workers")
 	Attributes(func() {
 		Attribute("total_items", Integer, "Total number of items in the collection")
-		Attribute("items", CollectionOf(Worker), "Response items")
+		Attribute("items", CollectionOf(WorkerMedia), "Response items")
 		Attribute("total_pages", Integer, "Total number of pages in the collection")
 		Attribute("links", ResourceLinks, "List of workers links")
 	})

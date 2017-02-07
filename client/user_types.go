@@ -7,6 +7,11 @@
 
 package client
 
+import (
+	"github.com/goadesign/goa"
+	"unicode/utf8"
+)
+
 // resourceLink user type.
 type resourceLink struct {
 	// Represents a link href
@@ -40,4 +45,59 @@ type ResourceLink struct {
 	Method *string `form:"method,omitempty" json:"method,omitempty" xml:"method,omitempty"`
 	// Represents a link rel
 	Rel *string `form:"rel,omitempty" json:"rel,omitempty" xml:"rel,omitempty"`
+}
+
+// workerPayload user type.
+type workerPayload struct {
+	// Worker description
+	Description *string `form:"description,omitempty" json:"description,omitempty" xml:"description,omitempty"`
+	// Worker environment variables
+	Environment map[string]interface{} `form:"environment,omitempty" json:"environment,omitempty" xml:"environment,omitempty"`
+	// Worker name
+	Name *string `form:"name,omitempty" json:"name,omitempty" xml:"name,omitempty"`
+}
+
+// Validate validates the workerPayload type instance.
+func (ut *workerPayload) Validate() (err error) {
+	if ut.Name != nil {
+		if utf8.RuneCountInString(*ut.Name) < 2 {
+			err = goa.MergeErrors(err, goa.InvalidLengthError(`response.name`, *ut.Name, utf8.RuneCountInString(*ut.Name), 2, true))
+		}
+	}
+	return
+}
+
+// Publicize creates WorkerPayload from workerPayload
+func (ut *workerPayload) Publicize() *WorkerPayload {
+	var pub WorkerPayload
+	if ut.Description != nil {
+		pub.Description = ut.Description
+	}
+	if ut.Environment != nil {
+		pub.Environment = ut.Environment
+	}
+	if ut.Name != nil {
+		pub.Name = ut.Name
+	}
+	return &pub
+}
+
+// WorkerPayload user type.
+type WorkerPayload struct {
+	// Worker description
+	Description *string `form:"description,omitempty" json:"description,omitempty" xml:"description,omitempty"`
+	// Worker environment variables
+	Environment map[string]interface{} `form:"environment,omitempty" json:"environment,omitempty" xml:"environment,omitempty"`
+	// Worker name
+	Name *string `form:"name,omitempty" json:"name,omitempty" xml:"name,omitempty"`
+}
+
+// Validate validates the WorkerPayload type instance.
+func (ut *WorkerPayload) Validate() (err error) {
+	if ut.Name != nil {
+		if utf8.RuneCountInString(*ut.Name) < 2 {
+			err = goa.MergeErrors(err, goa.InvalidLengthError(`response.name`, *ut.Name, utf8.RuneCountInString(*ut.Name), 2, true))
+		}
+	}
+	return
 }
