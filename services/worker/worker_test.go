@@ -13,7 +13,7 @@ func TestWorker_Save(t *testing.T) {
 	}
 	tests := []struct {
 		name    string
-		w       *Worker
+		w       *worker
 		args    args
 		want    *models.Worker
 		wantErr bool
@@ -22,7 +22,7 @@ func TestWorker_Save(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			w := &Worker{}
+			w := &worker{}
 			got, err := w.Save(tt.args.worker)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Worker.Save() error = %v, wantErr %v", err, tt.wantErr)
@@ -41,7 +41,7 @@ func TestWorker_Update(t *testing.T) {
 	}
 	tests := []struct {
 		name    string
-		w       *Worker
+		w       *worker
 		args    args
 		wantErr bool
 	}{
@@ -49,7 +49,7 @@ func TestWorker_Update(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			w := &Worker{}
+			w := &worker{}
 			if err := w.Update(tt.args.worker); (err != nil) != tt.wantErr {
 				t.Errorf("Worker.Update() error = %v, wantErr %v", err, tt.wantErr)
 			}
@@ -63,7 +63,7 @@ func TestWorker_Delete(t *testing.T) {
 	}
 	tests := []struct {
 		name    string
-		w       *Worker
+		w       *worker
 		args    args
 		wantErr bool
 	}{
@@ -71,7 +71,7 @@ func TestWorker_Delete(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			w := &Worker{}
+			w := &worker{}
 			if err := w.Delete(tt.args.worker); (err != nil) != tt.wantErr {
 				t.Errorf("Worker.Delete() error = %v, wantErr %v", err, tt.wantErr)
 			}

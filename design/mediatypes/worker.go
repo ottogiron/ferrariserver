@@ -32,7 +32,6 @@ var WorkerMedia = MediaType("application/vnd.worker+json", func() {
 		Attribute("links")
 	})
 
-	
 })
 
 //WorkersMedia definition of workers media type

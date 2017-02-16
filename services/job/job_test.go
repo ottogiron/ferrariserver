@@ -19,7 +19,7 @@ var testWorkerIDWithError = "worker123withError"
 
 var testJobLogIDWithError = "joblogWithError"
 
-func newJobService(ctx context.Context, recordLogs bool, logsInterval time.Duration, t *testing.T) *Job {
+func newJobService(ctx context.Context, recordLogs bool, logsInterval time.Duration, t *testing.T) *job {
 	logger := log15.New()
 	logger.SetHandler(log15.DiscardHandler())
 	j := New(
@@ -30,7 +30,7 @@ func newJobService(ctx context.Context, recordLogs bool, logsInterval time.Durat
 		SetRecordLogs(recordLogs),
 		SetRecordLogsInterval(logsInterval),
 	)
-	return j
+	return j.(*job)
 }
 
 func TestJob_Save(t *testing.T) {

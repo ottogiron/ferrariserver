@@ -9,7 +9,7 @@ import (
 
 	"github.com/ferrariframework/ferrariserver/grpc/gen"
 	"github.com/ferrariframework/ferrariserver/models"
-	"github.com/ferrariframework/ferrariserver/services/job"
+	"github.com/ferrariframework/ferrariserver/services"
 	"github.com/pkg/errors"
 )
 
@@ -17,11 +17,11 @@ var _ gen.JobServiceServer = (*JobService)(nil)
 
 //JobService implements a grpc JobService
 type JobService struct {
-	jobService job.Service
+	jobService services.Job
 }
 
 //NewJobService returns a new jobService
-func NewJobService(jobService job.Service) *JobService {
+func NewJobService(jobService services.Job) *JobService {
 	return &JobService{jobService: jobService}
 }
 

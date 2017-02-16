@@ -9,23 +9,23 @@ type Service interface {
 	Delete(models.Worker) error
 }
 
-var _ Service = (*Worker)(nil)
+var _ Service = (*worker)(nil)
 
-//Worker implementation of a worker
-type Worker struct {
+//worker implementation of a worker
+type worker struct {
 }
 
 //Save saves a new worker
-func (w *Worker) Save(worker models.Worker) (*models.Worker, error) {
+func (w *worker) Save(worker models.Worker) (*models.Worker, error) {
 	panic("not implemented")
 }
 
 //Update updates a worker
-func (w *Worker) Update(worker models.Worker) error {
+func (w *worker) Update(worker models.Worker) error {
 	panic("not implemented")
 }
 
 //Delete deletes a worker
-func (w *Worker) Delete(worker models.Worker) error {
+func (w *worker) Delete(worker models.Worker) error {
 	panic("not implemented")
 }

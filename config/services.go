@@ -15,6 +15,7 @@ import (
 
 	"github.com/ferrariframework/ferrariserver/grpc/gen"
 	rpcservices "github.com/ferrariframework/ferrariserver/grpc/services"
+	"github.com/ferrariframework/ferrariserver/services"
 	jobservice "github.com/ferrariframework/ferrariserver/services/job"
 	"github.com/ferrariframework/ferrariserver/store"
 	"github.com/inconshreveable/log15"
@@ -113,7 +114,7 @@ func ElasticClient(setSniff bool, urls ...string) (*elastic.Client, error) {
 }
 
 //JobService Configures a new instance of a job service
-func JobService(ctx context.Context, logger log15.Logger, jobStore store.Job, jobLogStore store.JobLog, recordLogs bool, recordLogsInterval time.Duration) jobservice.Service {
+func JobService(ctx context.Context, logger log15.Logger, jobStore store.Job, jobLogStore store.JobLog, recordLogs bool, recordLogsInterval time.Duration) services.Job {
 	clogger := logger.New("service", "job")
 
 	return jobservice.New(
