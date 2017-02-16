@@ -27,6 +27,11 @@ generate_grpc:
 	@protoc -I grpc/ grpc/job.proto --go_out=plugins=grpc:grpc/gen
 	@echo Done
 
+generate_mocks: 
+	@echo Generating mocks for stores
+	@mkdir -p store/mock
+	@mockgen --package=mock github.com/ferrariframework/ferrariserver/store Worker,Run,JobLog,Job > store/mock/mock.go
+
 lint:
 	@go fmt $(SOURCE_DIRS)
 	@go vet $(SOURCE_DIRS)
