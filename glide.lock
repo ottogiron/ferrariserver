@@ -1,5 +1,5 @@
 hash: 1cd6e222e047dc0c6ee341782805890f1452cc29127195db52be1316e68d0b2b
-updated: 2017-01-28T19:26:36.556279039-06:00
+updated: 2017-03-09T18:14:58.074900535-06:00
 imports:
 - name: github.com/armon/go-metrics
   version: 93f237eba9b0602f3e73710416558854a81d9337
@@ -25,6 +25,10 @@ imports:
   - goagen/utils
   - uuid
   - version
+- name: github.com/golang/mock
+  version: bd3c8e81be01eef76d4b503f5e687d2d1354d2d9
+  subpackages:
+  - gomock
 - name: github.com/golang/protobuf
   version: 8ee79997227bf9b34611aee7946ae64735e6fd93
   subpackages:
@@ -129,11 +133,10 @@ imports:
   - stack
   - term
 - name: gopkg.in/olivere/elastic.v3
-  version: cc83f6fa5fdc5c33399f5d4b68b9621b342aa393
+  version: 89b2f0f27bbe09ff5ee27cb6f4422cb2d89c6be8
 - name: gopkg.in/olivere/elastic.v5
   version: b272fab42387a42585235d56f8c6b53b13ddfb7d
   subpackages:
-  - backoff
   - uritemplates
 - name: gopkg.in/yaml.v2
   version: a5b47d31c556af34a302ce5d659e6fea44d90de0
